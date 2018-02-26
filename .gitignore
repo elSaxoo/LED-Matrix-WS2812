@@ -35,3 +35,7 @@
 .vscode/*.db
 .vscode/c_cpp_properties.json
 .vscode/launch.json
+.vscode/arduino.json
+.vscode/.BROWSE.C_CPP.DB-shm
+.vscode/.BROWSE.C_CPP.DB-wal
+.vscode/settings.json
