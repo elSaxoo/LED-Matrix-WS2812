@@ -1,13 +1,13 @@
 #ifndef LEDSUBMATRIX_H
 #define LEDSUBMATRIX_H
 
-#include"LEDbaseMatrix.h"
+#include "LEDbaseMatrix.h"
 
 #include "Arduino.h"
 //#define __ASSERT_USE_STDERR
-#include<stdint.h>
+#include <stdint.h>
 #include <assert.h>
-#include<FastLED.h>
+#include <FastLED.h>
 
 namespace LEDArrangement
 {
@@ -110,11 +110,11 @@ void LEDsubMatrix<LED_base_Matrix, width, height>::operator=(const LEDsubMatrix<
     assert(this->matrix_width() == other_mat.matrix_width());
     assert(this->matrix_height() == other_mat.matrix_height());
 
-    // Die Matrix mit dem jeweils kleineren und Offset beestimmen
+    // Die Matrix mit dem jeweils kleineren und Offset bestimmen
     LEDsubMatrix<MAT, width, height>& min_row_mat = (this->row_offset < other_mat.row_offset ? *this : other_mat);
     LEDsubMatrix<MAT, width, height>& min_column_mat = (this->column_offset < other_mat.column_offset ? *this : other_mat);
     
-    // Die Matrix mit dem jeweils größeren Offset beestimmen
+    // Die Matrix mit dem jeweils größeren Offset bestimmen
     LEDsubMatrix<MAT, width, height>& max_row_mat = (this->row_offset >= other_mat.row_offset ? *this : other_mat);
     LEDsubMatrix<MAT, width, height>& max_column_mat = (this->column_offset >= other_mat.column_offset ? *this : other_mat);
 
@@ -123,14 +123,14 @@ void LEDsubMatrix<LED_base_Matrix, width, height>::operator=(const LEDsubMatrix<
 
     // Überlappung prüfen
     bool overlapping;
-    // Wenn die eine Matrix komplett links von der andern liegt
+    // Wenn die eine Matrix komplett links von der anderen liegt
     if(min_row_mat.row_offset + width <= max_row_mat.row_offset)
     {
         overlapping = false;
     }
     else
     {
-        // Wenn die eine Matrix komplett über von der andern liegt
+        // Wenn die eine Matrix komplett über der anderen liegt
         if(min_column_mat.column_offset + height <= max_column_mat.column_offset)
         {
             overlapping = false;
@@ -142,7 +142,7 @@ void LEDsubMatrix<LED_base_Matrix, width, height>::operator=(const LEDsubMatrix<
     }
     assert(overlapping == false);
 
-    // Einzelne Pixel Kopieren
+    // Einzelne Pixel kopieren
     for(UINT_8 i = 0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)

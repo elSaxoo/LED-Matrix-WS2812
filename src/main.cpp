@@ -1,6 +1,7 @@
-#include<FastLED.h>
-#include"LEDbaseMatrix.h"
-#include"LEDsubMatrix.h"
+#include <Arduino.h>
+#include <FastLED.h>
+#include "LEDbaseMatrix.h"
+#include "LEDsubMatrix.h"
 
 
 const uint16_t NUM_LEDS = 300;
@@ -18,7 +19,7 @@ LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 10, 10> sub_mat
 void setup() {
   // put your setup code here, to run once:
 
-  FastLED.setBrightness(192);
+  FastLED.setBrightness(128);
   FastLED.addLeds<NEOPIXEL,PIN>(leds, NUM_LEDS);
 
   base_mat = base_mat;
@@ -37,7 +38,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  sub_mat1 = sub_mat0;
+  //sub_mat1 = sub_mat0;
   // sub_mat2 = sub_mat1;
 
   // Die LED-Matrix testen
