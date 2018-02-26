@@ -91,8 +91,8 @@ LEDsubMatrix<LED_base_Matrix, width, height>::LEDsubMatrix(LED_base_Matrix& mat,
     base_matrix(mat)
 {
     // Parameter überprüfen
-    assert(this-column_offset + width <= base_matrix.matrix_width());
-    assert(this-row_offset + height <= base_matrix.matrix_height());
+    assert(this->column_offset + width <= base_matrix.matrix_width());
+    assert(this->row_offset + height <= base_matrix.matrix_height());
 
 }
 
@@ -172,7 +172,7 @@ CRGB& LEDsubMatrix<LED_base_Matrix, width, height>::pixel(UINT_8 row, UINT_8 col
     assert(row < height);
     assert(column < width);
 
-    return this->base_matrix.pixel(row + this->row_offset, column + this-column_offset);
+    return this->base_matrix.pixel(row + this->row_offset, column + this->column_offset);
 }
 
 
@@ -183,7 +183,7 @@ const CRGB& LEDsubMatrix<LED_base_Matrix, width, height>::const_pixel(UINT_8 row
     assert(row < height);
     assert(column < width);
 
-    return this->base_matrix.const_pixel(row + this->row_offset, column + this-column_offset);
+    return this->base_matrix.const_pixel(row + this->row_offset, column + this->column_offset);
 }
 
 
