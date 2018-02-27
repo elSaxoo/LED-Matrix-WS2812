@@ -2,6 +2,7 @@
 #include <FastLED.h>
 #include "LEDbaseMatrix.h"
 #include "LEDsubMatrix.h"
+#include "applications.h"
 
 #define DEBUG true
 
@@ -13,6 +14,8 @@ CRGBArray<NUM_LEDS> leds;
 
 // Eine LED-Matrix erstellen
 LEDArrangement::LEDbaseMatrix<30, 10> base_mat(leds, LEDArrangement::Wiring_Start_Point::TOP_RIGHT, LEDArrangement::Strip_Orientation::ZIGZAG_HORIZONTAL);
+
+LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 30, 8> sub_mat_time(base_mat, 0, 1);
 
 LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 10, 10> sub_mat0(base_mat, 0, 0);
 LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 10, 10> sub_mat1(base_mat, 0, 10);
@@ -66,5 +69,7 @@ void loop() {
   sub_mat2.self_test();
 
   if(DEBUG) Serial.println("all self_test complete");
+  LEDArrangement::print_string(sub_mat_time, "15:20", CHSV(0,255,255));
+
 
 }
