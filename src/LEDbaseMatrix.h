@@ -7,6 +7,9 @@
 #include <assert.h>
 #include <FastLED.h>
 
+#define DEBUG true
+#define CONSTRUCTOR_DEBUG false
+
 namespace LEDArrangement
 {
 
@@ -91,6 +94,7 @@ LEDbaseMatrix<width, height>::LEDbaseMatrix(CRGBArray<width * height>& leds, Wir
     strip_orientation(strip_orientation),
     complete_strip(leds)
 {
+    if(CONSTRUCTOR_DEBUG)   Serial.println("base const");
     // Parameter überprüfen
     this->complete_strip[width*height - 1] = this->complete_strip[width*height - 1]; // Falls LED-Streifen zu kurz Fehler beim Zugriff auf LED-Array
 }
@@ -316,7 +320,7 @@ void LEDbaseMatrix<width, height>::all_off()
 template<UINT_8 width, UINT_8 height>
 void LEDbaseMatrix<width, height>::self_test()
 {
-    const uint32_t delay_time_ms = 20000/300;
+    const uint32_t delay_time_ms = 15000/300;
     // erst alle ausschalten
     this->all_off();
 
@@ -326,10 +330,12 @@ void LEDbaseMatrix<width, height>::self_test()
     for(UINT_8 i=0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)
-        
-        this->pixel(i,j) = red;
-        FastLED.show();
-        delay(delay_time_ms);
+        {
+            this->pixel(i,j) = red;
+            FastLED.show();
+            if(DEBUG)   Serial.print("baseLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" red");
+            delay(delay_time_ms);
+        }
     }
 
     // Nacheinander Grün Färben
@@ -337,21 +343,25 @@ void LEDbaseMatrix<width, height>::self_test()
     for(UINT_8 i=0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)
-        
-        this->pixel(i,j) = green;
-        FastLED.show();
-        delay(delay_time_ms);
+        {
+            this->pixel(i,j) = green;
+            FastLED.show();
+            if(DEBUG)   Serial.print("baseLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" green");
+            delay(delay_time_ms);
+        }
     }
 
     // Nacheinander Blau Färben
-    const CRGB blue = CRGB(0,255,0);
+    const CRGB blue = CRGB(0,0,255);
     for(UINT_8 i=0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)
-        
-        this->pixel(i,j) = blue;
-        FastLED.show();
-        delay(delay_time_ms);
+        {
+            this->pixel(i,j) = blue;
+            FastLED.show();
+            if(DEBUG)   Serial.print("baseLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" blue");
+            delay(delay_time_ms);
+        }
     }
 
     // Nacheinander Weiß Färben
@@ -359,10 +369,12 @@ void LEDbaseMatrix<width, height>::self_test()
     for(UINT_8 i=0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)
-        
-        this->pixel(i,j) = white;
-        FastLED.show();
-        delay(delay_time_ms);
+        {
+            this->pixel(i,j) = white;
+            FastLED.show();
+            if(DEBUG)   Serial.print("baseLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" white");
+            delay(delay_time_ms);
+        }
     }
 
     delay(5000);
@@ -376,43 +388,47 @@ template<UINT_8 width, UINT_8 height>
 void LEDbaseMatrix<width, height>::strip_test()
 {
 
-    const uint32_t delay_time_ms = 20000/300;
+    const uint32_t delay_time_ms = 15000/300;
     // erst alle ausschalten
     this->all_off();
 
     // Rot
     const CRGB red = CRGB(255,0,0);
-    for(UINT_8 i = 0; i < width*height; ++i)
+    for(UINT_16 i = 0; i < width*height; ++i)
     {
         this->complete_strip[i] = red;
         FastLED.show();
+        if(DEBUG)   Serial.print("LED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.println(" red");
         delay(delay_time_ms);
     }
 
     // Grün
     const CRGB green = CRGB(0,255,0);
-    for(UINT_8 i = 0; i < width*height; ++i)
+    for(UINT_16 i = 0; i < width*height; ++i)
     {
         this->complete_strip[i] = green;
         FastLED.show();
+        if(DEBUG)   Serial.print("LED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.println(" green");
         delay(delay_time_ms);
     }
 
     // Blau
     const CRGB blue = CRGB(0,0,255);
-    for(UINT_8 i = 0; i < width*height; ++i)
+    for(UINT_16 i = 0; i < width*height; ++i)
     {
         this->complete_strip[i] = blue;
         FastLED.show();
+        if(DEBUG)   Serial.print("LED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.println(" blue");
         delay(delay_time_ms);
     }
 
     // Weiß
     const CRGB white = CRGB(255,255,255);
-    for(UINT_8 i = 0; i < width*height; ++i)
+    for(UINT_16 i = 0; i < width*height; ++i)
     {
         this->complete_strip[i] = white;
         FastLED.show();
+        if(DEBUG)   Serial.print("LED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.println(" white");
         delay(delay_time_ms);
     }
 

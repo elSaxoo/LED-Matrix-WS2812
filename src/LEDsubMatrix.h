@@ -9,6 +9,9 @@
 #include <assert.h>
 #include <FastLED.h>
 
+#define DEBUG true
+#define CONSTRUCTOR_DEBUG false
+
 namespace LEDArrangement
 {
 
@@ -90,9 +93,16 @@ LEDsubMatrix<LED_base_Matrix, width, height>::LEDsubMatrix(LED_base_Matrix& mat,
     column_offset(Column_Offset),
     base_matrix(mat)
 {
+    if(CONSTRUCTOR_DEBUG)   Serial.println("sub const");
+    if(CONSTRUCTOR_DEBUG)   Serial.print("Cc "); 
+    if(CONSTRUCTOR_DEBUG)   Serial.println(this->column_offset + width <= base_matrix.matrix_width());
+    if(CONSTRUCTOR_DEBUG)   Serial.print("Rc "); 
+    if(CONSTRUCTOR_DEBUG)   Serial.println(this->row_offset + height <= base_matrix.matrix_height());
+    if(CONSTRUCTOR_DEBUG) while(Serial.available());
+    
     // Parameter überprüfen
-    assert(this-column_offset + width <= base_matrix.matrix_width());
-    assert(this-row_offset + height <= base_matrix.matrix_height());
+    assert(this->column_offset + width <= base_matrix.matrix_width());
+    assert(this->row_offset + height <= base_matrix.matrix_height());
 
 }
 
@@ -172,7 +182,7 @@ CRGB& LEDsubMatrix<LED_base_Matrix, width, height>::pixel(UINT_8 row, UINT_8 col
     assert(row < height);
     assert(column < width);
 
-    return this->base_matrix.pixel(row + this->row_offset, column + this-column_offset);
+    return this->base_matrix.pixel(row + this->row_offset, column + this->column_offset);
 }
 
 
@@ -183,7 +193,7 @@ const CRGB& LEDsubMatrix<LED_base_Matrix, width, height>::const_pixel(UINT_8 row
     assert(row < height);
     assert(column < width);
 
-    return this->base_matrix.const_pixel(row + this->row_offset, column + this-column_offset);
+    return this->base_matrix.const_pixel(row + this->row_offset, column + this->column_offset);
 }
 
 
@@ -219,7 +229,7 @@ void LEDsubMatrix<LED_base_Matrix, width, height>::all_off()
 template<typename LED_base_Matrix, UINT_8 width, UINT_8 height>
 void LEDsubMatrix<LED_base_Matrix, width, height>::self_test()
 {
-    const uint32_t delay_time_ms = 20000/300 * ((width*height)/(this->base_matrix.matrix_width()*this->base_matrix.matrix_height()));
+    const uint32_t delay_time_ms = 15000/300 * ((width*height)/(this->base_matrix.matrix_width()*this->base_matrix.matrix_height()));
     // erst alle ausschalten
     this->all_off();
 
@@ -229,10 +239,12 @@ void LEDsubMatrix<LED_base_Matrix, width, height>::self_test()
     for(UINT_8 i=0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)
-        
-        this->pixel(i,j) = red;
-        FastLED.show();
-        delay(delay_time_ms);
+        {
+            this->pixel(i,j) = red;
+            FastLED.show();
+            if(DEBUG)   Serial.print("subLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" red");
+            delay(delay_time_ms);
+        }
     }
 
     // Nacheinander Grün Färben
@@ -240,21 +252,25 @@ void LEDsubMatrix<LED_base_Matrix, width, height>::self_test()
     for(UINT_8 i=0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)
-        
-        this->pixel(i,j) = green;
-        FastLED.show();
-        delay(delay_time_ms);
+        {
+            this->pixel(i,j) = green;
+            FastLED.show();
+            if(DEBUG)   Serial.print("subLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" green");
+            delay(delay_time_ms);
+        }
     }
 
     // Nacheinander Blau Färben
-    const CRGB blue = CRGB(0,255,0);
+    const CRGB blue = CRGB(0,0,255);
     for(UINT_8 i=0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)
-        
-        this->pixel(i,j) = blue;
-        FastLED.show();
-        delay(delay_time_ms);
+        {
+            this->pixel(i,j) = blue;
+            FastLED.show();
+            if(DEBUG)   Serial.print("subLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" blue");
+            delay(delay_time_ms);
+        }
     }
 
     // Nacheinander Weiß Färben
@@ -262,10 +278,12 @@ void LEDsubMatrix<LED_base_Matrix, width, height>::self_test()
     for(UINT_8 i=0; i < height; ++i)
     {
         for(UINT_8 j = 0; j < width; ++j)
-        
-        this->pixel(i,j) = white;
-        FastLED.show();
-        delay(delay_time_ms);
+        {
+            this->pixel(i,j) = white;
+            FastLED.show();
+            if(DEBUG)   Serial.print("subLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" white");
+            delay(delay_time_ms);
+        }
     }
 
     delay(2000);
