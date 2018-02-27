@@ -17,34 +17,30 @@ LEDArrangement::LEDbaseMatrix<30, 10> base_mat(leds, LEDArrangement::Wiring_Star
 
 LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 30, 8> sub_mat_time(base_mat, 0, 1);
 
-LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 10, 10> sub_mat0(base_mat, 0, 0);
-LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 10, 10> sub_mat1(base_mat, 0, 10);
-LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 10, 10> sub_mat2(base_mat, 0, 20);
-
 
 void setup() {
-    // put your setup code here, to run once:
+  // put your setup code here, to run once:
 
-    Serial.begin(57600);
-    delay(100);
+  Serial.begin(57600);
+  delay(100);
 
-    
-    if(DEBUG) Serial.println("Init FastLED");
-    FastLED.setBrightness(64);
-    FastLED.addLeds<NEOPIXEL,PIN>(leds, NUM_LEDS);
-  
-    //base_mat = base_mat;
-  
-  
-    if(DEBUG) Serial.println("base all_off");
-    base_mat.all_off();
-    FastLED.show();
-  
-    delay(1000);
 
-    // Den LED-Streifen testen
-    if(DEBUG) Serial.println("base strip_test");
-    base_mat.strip_test();
+  if(DEBUG) Serial.println("Init FastLED");
+  FastLED.setBrightness(64);
+  FastLED.addLeds<NEOPIXEL,PIN>(leds, NUM_LEDS);
+
+  //base_mat = base_mat;
+
+
+  if(DEBUG) Serial.println("base all_off");
+  base_mat.all_off();
+  FastLED.show();
+
+  delay(1000);
+
+  // Den LED-Streifen testen
+  if(DEBUG) Serial.println("base strip_test");
+  base_mat.strip_test();
 
 
   if(DEBUG) Serial.println("setup complete");
@@ -56,19 +52,10 @@ void loop() {
 
   // Die LED-Matrix testen
   if(DEBUG) Serial.println("base self_test");
-  base_mat.self_test();
-
-  // Die Sub-Matrizen testen
-  if(DEBUG) Serial.println("mat0 self_test");
-  sub_mat0.self_test();
-
-  if(DEBUG) Serial.println("mat1 self_test");
-  sub_mat1.self_test();
-
-  if(DEBUG) Serial.println("mat2 self_test");
-  sub_mat2.self_test();
-
+ // base_mat.self_test();
   if(DEBUG) Serial.println("all self_test complete");
+
+  
   LEDArrangement::print_string(sub_mat_time, "15:20", CHSV(0,255,255));
 
 
