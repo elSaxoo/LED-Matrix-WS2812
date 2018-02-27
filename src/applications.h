@@ -5,7 +5,23 @@
 
 namespace LEDArrangement
 {
-    // Die gespeicherten bytes müssen von Rechts nach Links auf Oben nach Unten gesehen werden
+    // Die erste Dimension des Arrays stellt den Integer Wert des Zeichens dar.
+    // Die zweite Dimension des Arrays stellt die 5 Reihen eines Zeichens dar.
+    // In jeder Reihe sind 8 Werte gespeichert, die jeder für eine Zeile stehen.
+    // Die Zeilen werden von oben nach unten gezählt, während die Bits im Byte der Reihe
+    // von rechts nach links zu lesen sind.
+    //
+    //  |-Zeichen-|
+    //  |-| Reihe
+    //   X X X X X
+    //   X X X X X
+    //   X X X X X
+    //   X X X X X
+    //   X X X X X
+    //   X X X X X
+    //   X X X X X
+    //   X X X X X
+
     const UINT_8 font[128][5] = {
         {0x00,0x00,0x00,0x00,0x00},
         {0x00,0x00,0x00,0x00,0x00},
@@ -143,6 +159,7 @@ namespace LEDArrangement
         {0x00,0x41,0x36,0x08,0x00},	// }
         {0x0C,0x02,0x0C,0x10,0x0C},	// ~
     };
+
     #define char_height 8
     #define char_width 5
 
@@ -154,30 +171,36 @@ namespace LEDArrangement
         UINT_8 height = mat.matrix_height();
         int text_length = text.length();
 
-        // Testen ob Submatrix hoch genug ist für die Chars
+        // Testen ob Submatrix hoch genug ist für die Zeichen
         assert(char_height <= height);
 
-        // text.charAt(n) returns the character at n
+
+        // Buchstaben durchlaufen bis das Stringende erreicht wurde
+        // oder bis die Breite der SubMatrix erreicht wurde. K ist auch die absolute Reihe
+        // in der Submatrix zum setzen der Pixel.
         UINT_8 k = 0;
-        UINT_8 character = 0;
-        while(k < width && character < text_length){
-            // Buchstabenbreite durchlaufen
-            for(UINT_8 i = 0; i < char_width; ++i){
-                UINT_8 row = font[(UINT_8)text.charAt(character)][i];
-                // Buchstabenhöhe durchlaufen
+        for(UINT_8 character = 0; character < text_length && k < width; ++character){
+
+            // Zeichenreihen eines Zeichens durchlaufen bis zum Zeichenende.
+            for(UINT_8 i = 0; i < char_width && k < width; ++i){
+
+                // Zeilen innerhalb der Zeichenreihe durchlaufen, um die Pixel von Oben nach unten 
+                // in der Zeichenreihe i an der absoluten Stelle k zu setzen.
                 for(UINT_8 j = 0; j < char_height; ++j){
-                    if((1<<j) & row){
-                        // Pixel setzen
-                        mat.pixel(j,k) = CRGB(255,0,0);
+
+                    // Wenn Bit im Zeichenbyte an der Stelle j 1 ist, dann setz meinen Pixel auf color.
+                    // An der absoluten Stelle (j,k) in der Submatrix.
+                    if((1<<j) & font[(UINT_8)text.charAt(character)][i]){
+                        mat.pixel(j,k) = color;
                     }
                 }
+                // Nach jeder Abgeschlossenen Zeichenreihe eine Reihe weitergehen auf der Submatrix.
                 ++k;
             }
-            // Leerzeile nach dem Buchstaben
+            // Leerzeile nach dem Buchstaben, indem einfach eine Reihe auf der Submatrix übersprungen wird.
             ++k;
-            // Einen Buchstaben weitergehen
-            ++character;
         }
+        if(DEBUG) Serial.println("base all_off");
         FastLED.show();
     }
 

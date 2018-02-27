@@ -19,44 +19,44 @@ LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 30, 8> sub_mat_
 
 
 void setup() {
-  // put your setup code here, to run once:
+    // put your setup code here, to run once:
 
-  Serial.begin(57600);
-  delay(100);
-
-
-  if(DEBUG) Serial.println("Init FastLED");
-  FastLED.setBrightness(64);
-  FastLED.addLeds<NEOPIXEL,PIN>(leds, NUM_LEDS);
-
-  //base_mat = base_mat;
+    Serial.begin(57600);
+    delay(100);
 
 
-  if(DEBUG) Serial.println("base all_off");
-  base_mat.all_off();
-  FastLED.show();
+    if(DEBUG) Serial.println("Init FastLED");
+    FastLED.setBrightness(64);
+    FastLED.addLeds<NEOPIXEL,PIN>(leds, NUM_LEDS);
 
-  delay(1000);
-
-  // Den LED-Streifen testen
-  if(DEBUG) Serial.println("base strip_test");
-  base_mat.strip_test();
+    //base_mat = base_mat;
 
 
-  if(DEBUG) Serial.println("setup complete");
+    if(DEBUG) Serial.println("base all_off");
+    base_mat.all_off();
+    FastLED.show();
+
+    delay(1000);
+
+    // Den LED-Streifen testen
+    if(DEBUG) Serial.println("base strip_test");
+    base_mat.strip_test();
+
+
+    if(DEBUG) Serial.println("setup complete");
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+    // put your main code here, to run repeatedly:
 
-  // Die LED-Matrix testen
-  if(DEBUG) Serial.println("base self_test");
- // base_mat.self_test();
-  if(DEBUG) Serial.println("all self_test complete");
+    // Die LED-Matrix testen
+    if(DEBUG) Serial.println("base self_test");
+    // base_mat.self_test();
+    if(DEBUG) Serial.println("all self_test complete");
 
-  
-  LEDArrangement::print_string(sub_mat_time, "15:20", CHSV(0,255,255));
 
+    LEDArrangement::print_string(sub_mat_time, "15:20", CRGB(255,0,0));
+    delay(1000);
 
 }
