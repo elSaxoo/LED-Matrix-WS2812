@@ -9,7 +9,6 @@
 #define DEBUG true
 
 
-
 const uint16_t NUM_LEDS = 300;
 const uint8_t PIN = 6;
 CRGBArray<NUM_LEDS> leds;
