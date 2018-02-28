@@ -16,7 +16,7 @@ namespace LEDArrangement
 // Achtung template-Klasse
 // Implementierung aller Methoden findet in der Header-Datei statt
 template<UINT_8 height, UINT_8 width>
-class LEDbaseMatrix : public LEDMatrix<height, width>
+class LEDbaseMatrix : public LEDMatrix
 {
     public:
    
@@ -83,7 +83,7 @@ class LEDbaseMatrix : public LEDMatrix<height, width>
 template<UINT_8 height, UINT_8 width>
 LEDbaseMatrix<height, width>::LEDbaseMatrix(CRGBArray<width * height>& leds, Wiring_Start_Point wiring_start_point, Strip_Orientation strip_orientation)
 :
-    LEDMatrix<height, width>(), // Konstruktor Basis-Klasse aufrufen
+    LEDMatrix(), // Konstruktor Basis-Klasse aufrufen
     wiring_start_point(wiring_start_point),
     strip_orientation(strip_orientation),
     complete_strip(leds)

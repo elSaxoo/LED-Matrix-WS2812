@@ -173,9 +173,8 @@ namespace LEDArrangement
 
 
 
-
-    template<typename LED_sub_Matrix>
-    void print_string(LED_sub_Matrix& mat, const String text, const CRGB color )
+    // Print-Funktion von elSaxoo
+    void print_String(LEDMatrix& mat, const String text, const CRGB color, const CRGB background = CRGB(0,0,0))
     {
         UINT_8 width = mat.matrix_width();
         UINT_8 height = mat.matrix_height();
@@ -203,6 +202,9 @@ namespace LEDArrangement
                     if((1<<j) & font[(UINT_8)text.charAt(character)][i]){
                         mat.pixel(j,k) = color;
                     }
+                    else{
+                        mat.pixel(j,k) = background;                      
+                    }
                 }
                 // Nach jeder Abgeschlossenen Zeichenreihe eine Reihe weitergehen auf der Submatrix.
                 ++k;
@@ -214,12 +216,140 @@ namespace LEDArrangement
         FastLED.show();
     }
 
-    template<typename LED_sub_Matrix>
-    void print_string(LED_sub_Matrix& mat, const String text, const CHSV color )
+    // Print-Funktion von elSaxoo
+    // Überladung von print_string für CHSV Farbe
+    void print_String(LEDMatrix& mat, const String text, const CHSV color, const CHSV background = CHSV(0,0,0))
     {
-        print_string(mat, text, CRGB(color));
+        print_String(mat, text, CRGB(color), CRGB(background));
+    }
+
+
+
+    // Print-Funktion von SvenJupiter
+    void print_char(LEDMatrix& mat, const char character, const CRGB color, const CRGB background = CRGB(0,0,0))
+    {
+        // Sicherstellen, das Matrix größ genug ist
+        if(ASSERT_CHECK)    assert(mat.matrix_height() >= char_height);
+        if(ASSERT_CHECK)    assert(mat.matrix_width() >= char_width);
+
+        // Bitmap aus font-Array ermitteln
+        const UINT_8* const character_bitmap = font[(const UINT_8) character]; // Hier wird nur ein Zeiger gespeichert
+
+        // Für jede Spalte der Matrix
+        for(UINT_8 j = 0; j < char_width; ++j)
+        {
+
+            // Debug Ausgaben
+            if(DEBUG)   Serial.println("Setting up column " + String(j));
+
+            // Für jede Zeile der Spalte
+            for(UINT_8 i = 0; i < char_height; ++i)
+            {
+
+                // Debug Ausgaben
+                if(DEBUG)   Serial.print("Setting up row " + String(i) + "\t");
+
+                // Debug Ausgaben
+                if(DEBUG)   Serial.print("Testing: " + String(character_bitmap[j] & (1<<i)) + "\t");
+
+                // Wenn das Bit der font an der Position i gesetzt ist...
+                if(character_bitmap[j] & (1<<i))
+                {
+                    // Debug Ausgaben
+                    if(DEBUG)   Serial.println("Character");
+
+                    // ...gehört das Pixel (i,j) zum Buchstaben
+                    mat.pixel(i,j) = color;
+                }
+                else
+                {
+                    // Debug Ausgaben
+                    if(DEBUG)   Serial.println("Backgroung");
+
+                    // ...ansonste ist es Hintergrund
+                    mat.pixel(i,j) = background;
+                }
+            }
+        }
+
+        // Nachdem die Pixel passen gesetzt wurde
+        // kann der Buchstabe angezeigt werden
+        if(DEBUG) Serial.println("printed " + character);
+        FastLED.show();
+    }
+
+    // Print-Funktion von SvenJupiter
+    // Überladung von print_char für CHSV Farbe
+    void print_char(LEDMatrix& mat, const char character, const CHSV color, const CHSV background = CHSV(0,0,0))
+    {
+        print_char(mat, character, CRGB(color), CRGB(background));
 
     }
+
+    // Print-Funktion von SvenJupiter
+    void print_string(LEDMatrix& mat, const char* const text, const CRGB color, const CRGB background = CRGB(0,0,0), const UINT_8 space_between_characters = 1)
+    {
+        // Sicherstellen, das Matrix hoch genug für Zeichen ist
+        if(ASSERT_CHECK)    assert(mat.matrix_height() >= char_height);
+
+        // Zeilen-Offset für Buchstaben
+        UINT_8 colum_offset;
+
+        // Für jeden Buchstaben in text
+        for(UINT_8 i = 0; text[i] != '\0'; ++i)
+        {
+            // Debug Ausgaben
+            if(DEBUG)   Serial.println("Trying to print "+ String(i+1) + ". char '" + text[i] + "'");
+
+            // Zeilen-Offset für nächsten Buchstabe ermitteln
+            colum_offset = i * (char_width + space_between_characters);
+
+            // Debug Ausgaben
+            if(DEBUG)   Serial.println("Space check");
+
+            // Wenn kein weiterer Buchstabe auf die Matrix passt
+            if(colum_offset + char_width > mat.matrix_width())
+            {
+                // Debug Ausgaben
+                if(DEBUG)   Serial.println("No more space available");
+                if(DEBUG)   Serial.println("Breaking from loop");
+
+                // for-Schleife vorzeitig beenden
+                break;
+            }
+            else
+            {               
+                // Debug Ausgaben
+                if(DEBUG)   Serial.println("Space available");
+                if(DEBUG)   Serial.println("Printing char " + text[i]);
+
+                // Eine Submatrix erstellen
+                LEDsubMatrix<char_height, char_width> sub_mat(mat, 0, colum_offset);
+
+                // Buchstaben auf der Submatrix ausgeben
+                print_char(sub_mat, text[i], color, background);
+            }            
+        }
+
+        // Debug Ausgaben
+        if(DEBUG)   Serial.println("done");
+    }
+
+
+    // Print-Funktion von SvenJupiter
+    // Überladung von print_string für CHSV Farbe
+    void print_string(LEDMatrix& mat, const char* const text, const CHSV color, const CHSV background = CHSV(0,0,0), const UINT_8 space_between_characters = 1)
+    {
+        print_string(mat, text, CRGB(color), CRGB(background), space_between_characters);
+    }
+
+
+
+
+
+
+
+
 } // Ende namespace LEDArrangement
 
 #endif

@@ -13,25 +13,23 @@ namespace LEDArrangement
 
 // Achtung template-Klasse
 // Implementierung aller Methoden findet in der Header-Datei statt
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-class LEDsubMatrix : public LEDMatrix<height, width>
+template<UINT_8 height, UINT_8 width>
+class LEDsubMatrix : public LEDMatrix
 {
     public:
     // Konstruktor
-    LEDsubMatrix(LED_base_Matrix& mat, UINT_8 Row_Offset, UINT_8 Column_Offset);
+    LEDsubMatrix(LEDMatrix& mat, UINT_8 Row_Offset, UINT_8 Column_Offset);
 
 
     // Kein Kopierkonstruktor zulassen
     // -> LEDsubMatrix-Objekte könne nicht per call-by-value an Funktion übergeben werden, 
     // nur noch mit call-by-reference (Zeiger oder Referenz)
-    template<typename OTHER_BASE_MAT>
-    LEDsubMatrix(const LEDsubMatrix<OTHER_BASE_MAT, height, width>&) = delete;
+    LEDsubMatrix(const LEDsubMatrix<height, width>&) = delete;
     
     // Zuweisungsoperator
     // Verschiedene SubMatrizen könne einander Zugewiesen werden, solange sie sich nicht überschneiden
     // und die gleiche Größe haben
-    template<typename OTHER_BASE_MAT, typename MAT>
-    void operator=(const LEDsubMatrix<OTHER_BASE_MAT, height, width>& other_mat);  
+    void operator=(const LEDsubMatrix<height, width>& other_mat);  
 
 
     // Getter-Methoden für Dimensionen der Matrix
@@ -72,38 +70,37 @@ class LEDsubMatrix : public LEDMatrix<height, width>
     const UINT_8 row_offset;
     const UINT_8 column_offset;
 
-    LED_base_Matrix& base_matrix;
+    LEDMatrix& base_matrix;
 
 };
 
 
 
 
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-LEDsubMatrix<LED_base_Matrix, height, width>::LEDsubMatrix(LED_base_Matrix& mat, UINT_8 Row_Offset, UINT_8 Column_Offset)
+template<UINT_8 height, UINT_8 width>
+LEDsubMatrix<height, width>::LEDsubMatrix(LEDMatrix& mat, UINT_8 Row_Offset, UINT_8 Column_Offset)
 :
-    LEDMatrix<height, width>(), // Konstruktor Basis-Klasse aufrufen
+    LEDMatrix(), // Konstruktor Basis-Klasse aufrufen
     row_offset(Row_Offset),
     column_offset(Column_Offset),
     base_matrix(mat)
 {
     if(CONSTRUCTOR_DEBUG)   Serial.println("sub const");
     if(CONSTRUCTOR_DEBUG)   Serial.print("Cc "); 
-    if(CONSTRUCTOR_DEBUG)   Serial.println(this->column_offset + width <= base_matrix.matrix_width());
+    if(CONSTRUCTOR_DEBUG)   Serial.println(this->column_offset + width <= this->base_matrix.matrix_width());
     if(CONSTRUCTOR_DEBUG)   Serial.print("Rc "); 
-    if(CONSTRUCTOR_DEBUG)   Serial.println(this->row_offset + height <= base_matrix.matrix_height());
+    if(CONSTRUCTOR_DEBUG)   Serial.println(this->row_offset + height <= this->base_matrix.matrix_height());
     if(CONSTRUCTOR_DEBUG)   while(Serial.available());
     
     // Parameter überprüfen
-    if(ASSERT_CHECK)    assert(this->column_offset + width <= base_matrix.matrix_width());
-    if(ASSERT_CHECK)    assert(this->row_offset + height <= base_matrix.matrix_height());
+    if(ASSERT_CHECK)    assert(this->column_offset + width <= this->base_matrix.matrix_width());
+    if(ASSERT_CHECK)    assert(this->row_offset + height <= this->base_matrix.matrix_height());
 
 }
 
 // Funktioniert noch nicht!!!
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-template<typename OTHER_BASE_MAT, typename MAT>
-void LEDsubMatrix<LED_base_Matrix, height, width>::operator=(const LEDsubMatrix<OTHER_BASE_MAT, height, width>& other_mat)
+template<UINT_8 height, UINT_8 width>
+void LEDsubMatrix<height, width>::operator=(const LEDsubMatrix<height, width>& other_mat)
 {
 
     // Zuwweisung auf sich selbst prüfen
@@ -115,12 +112,12 @@ void LEDsubMatrix<LED_base_Matrix, height, width>::operator=(const LEDsubMatrix<
     if(ASSERT_CHECK)    assert(this->matrix_height() == other_mat.matrix_height());
 
     // Die Matrix mit dem jeweils kleineren und Offset bestimmen
-    LEDsubMatrix<MAT, width, height>& min_row_mat = (this->row_offset < other_mat.row_offset ? *this : other_mat);
-    LEDsubMatrix<MAT, width, height>& min_column_mat = (this->column_offset < other_mat.column_offset ? *this : other_mat);
+    LEDsubMatrix<height, width>& min_row_mat = (this->row_offset < other_mat.row_offset ? *this : other_mat);
+    LEDsubMatrix<height, width>& min_column_mat = (this->column_offset < other_mat.column_offset ? *this : other_mat);
     
     // Die Matrix mit dem jeweils größeren Offset bestimmen
-    LEDsubMatrix<MAT, width, height>& max_row_mat = (this->row_offset >= other_mat.row_offset ? *this : other_mat);
-    LEDsubMatrix<MAT, width, height>& max_column_mat = (this->column_offset >= other_mat.column_offset ? *this : other_mat);
+    LEDsubMatrix<height, width>& max_row_mat = (this->row_offset >= other_mat.row_offset ? *this : other_mat);
+    LEDsubMatrix<height, width>& max_column_mat = (this->column_offset >= other_mat.column_offset ? *this : other_mat);
 
     // Sicherstellen, das die Offsets nicht gleich sind
     if(ASSERT_CHECK)    assert(this->row_offset != other_mat.row_offset && this->column_offset != other_mat.column_offset);
@@ -158,8 +155,8 @@ void LEDsubMatrix<LED_base_Matrix, height, width>::operator=(const LEDsubMatrix<
 }
 
 
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-UINT_16 LEDsubMatrix<LED_base_Matrix, height, width>::calc_pixel_position(UINT_8 row, UINT_8 column) const
+template<UINT_8 height, UINT_8 width>
+UINT_16 LEDsubMatrix<height, width>::calc_pixel_position(UINT_8 row, UINT_8 column) const
 {
     // Sicherstellen, das gültige Parameter übergeben wurden
     if(ASSERT_CHECK)    assert(row < height);
@@ -169,8 +166,8 @@ UINT_16 LEDsubMatrix<LED_base_Matrix, height, width>::calc_pixel_position(UINT_8
 }
 
 
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-CRGB& LEDsubMatrix<LED_base_Matrix, height, width>::pixel(UINT_8 row, UINT_8 column)
+template<UINT_8 height, UINT_8 width>
+CRGB& LEDsubMatrix<height, width>::pixel(UINT_8 row, UINT_8 column)
 {
     // Sicherstellen, das gültige Parameter übergeben wurden
     if(ASSERT_CHECK)    assert(row < height);
@@ -180,8 +177,8 @@ CRGB& LEDsubMatrix<LED_base_Matrix, height, width>::pixel(UINT_8 row, UINT_8 col
 }
 
 
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-const CRGB& LEDsubMatrix<LED_base_Matrix, height, width>::const_pixel(UINT_8 row, UINT_8 column) const
+template<UINT_8 height, UINT_8 width>
+const CRGB& LEDsubMatrix<height, width>::const_pixel(UINT_8 row, UINT_8 column) const
 {
     // Sicherstellen, das gültige Parameter übergeben wurden
     if(ASSERT_CHECK)    assert(row < height);
@@ -191,8 +188,8 @@ const CRGB& LEDsubMatrix<LED_base_Matrix, height, width>::const_pixel(UINT_8 row
 }
 
 
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-void LEDsubMatrix<LED_base_Matrix, height, width>::color_all(const CRGB& color)
+template<UINT_8 height, UINT_8 width>
+void LEDsubMatrix<height, width>::color_all(const CRGB& color)
 {
     for(UINT_8 i = 0; i < height; i++)
     {
@@ -204,8 +201,8 @@ void LEDsubMatrix<LED_base_Matrix, height, width>::color_all(const CRGB& color)
 }
 
 
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-void LEDsubMatrix<LED_base_Matrix, height, width>::color_all(const CHSV& color)
+template<UINT_8 height, UINT_8 width>
+void LEDsubMatrix<height, width>::color_all(const CHSV& color)
 {
     // Farbe von HSV nach RGB konvertieren
     // und Methode erneut aufrufen
@@ -213,15 +210,15 @@ void LEDsubMatrix<LED_base_Matrix, height, width>::color_all(const CHSV& color)
 }
 
 
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-void LEDsubMatrix<LED_base_Matrix, height, width>::all_off()
+template<UINT_8 height, UINT_8 width>
+void LEDsubMatrix<height, width>::all_off()
 {
     this->color_all(CRGB(0,0,0));
 }
 
 
-template<typename LED_base_Matrix, UINT_8 height, UINT_8 width>
-void LEDsubMatrix<LED_base_Matrix, height, width>::self_test()
+template<UINT_8 height, UINT_8 width>
+void LEDsubMatrix<height, width>::self_test()
 {
     const uint32_t delay_time_ms = 15000/300 * ((width*height)/(this->base_matrix.matrix_width()*this->base_matrix.matrix_height()));
     // erst alle ausschalten

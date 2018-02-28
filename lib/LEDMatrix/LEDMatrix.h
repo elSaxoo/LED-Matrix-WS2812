@@ -24,7 +24,7 @@ enum class Strip_Orientation {ALIGN_HORIZONTAL, ZIGZAG_HORIZONTAL, ALIGN_VERTICA
 
 
 // Virtuelle Basis-Klasse füe alle LED-Matrizen
-template<UINT_8 height, UINT_8 width> 
+// Definiert einheitlich das Interface über das mit den Matrizen interagiert werden kann
 class LEDMatrix
 {
     public:
@@ -41,7 +41,7 @@ class LEDMatrix
     virtual CRGB& pixel(UINT_8 row, UINT_8 column) =0;
     virtual const CRGB& const_pixel(UINT_8 row, UINT_8 column) const =0;
 
-    // Schnell alle LEDs ausschalten
+    // Alle LEDs färben
     virtual void color_all(const CRGB& color) =0;
     virtual void color_all(const CHSV& color) =0;
     virtual void all_off() =0;
@@ -59,5 +59,10 @@ class LEDMatrix
 
 
 } // Ende Namespace
- 
+
+
+// Unterklassen von LEDMatrix
+#include <LEDbaseMatrix.h>
+#include <LEDsubMatrix.h>
+
 #endif // LEDMATRIX_H
