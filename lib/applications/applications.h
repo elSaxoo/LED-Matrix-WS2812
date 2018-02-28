@@ -1,7 +1,13 @@
 #ifndef APPLICATIONS_H
 #define APPLICATIONS_H
-#include "LEDsubMatrix.h"
 
+
+#include <LEDMatrix.h>
+
+
+#define DEBUG true
+#define CONSTRUCTOR_DEBUG false
+#define ASSERT_CHECK true
 
 namespace LEDArrangement
 {
@@ -22,7 +28,12 @@ namespace LEDArrangement
     //   X X X X X
     //   X X X X X
 
-    const UINT_8 font[128][5] = {
+    #define char_height 8
+    #define char_width 5
+
+
+    // PROGMEM Macro plaziert Array in ROM-Speicher
+    const PROGMEM uint8_t font[128][char_width] = {
         {0x00,0x00,0x00,0x00,0x00},
         {0x00,0x00,0x00,0x00,0x00},
         {0x00,0x00,0x00,0x00,0x00},
@@ -160,8 +171,7 @@ namespace LEDArrangement
         {0x0C,0x02,0x0C,0x10,0x0C},	// ~
     };
 
-    #define char_height 8
-    #define char_width 5
+
 
 
     template<typename LED_sub_Matrix>
@@ -172,7 +182,7 @@ namespace LEDArrangement
         int text_length = text.length();
 
         // Testen ob Submatrix hoch genug ist für die Zeichen
-        assert(char_height <= height);
+        if(ASSERT_CHECK)    assert(char_height <= height);
 
 
         // Buchstaben durchlaufen bis das Stringende erreicht wurde
@@ -200,7 +210,7 @@ namespace LEDArrangement
             // Leerzeile nach dem Buchstaben, indem einfach eine Reihe auf der Submatrix übersprungen wird.
             ++k;
         }
-        if(DEBUG) Serial.println("base all_off");
+        if(DEBUG) Serial.println("printed " + '"' + text + '"');
         FastLED.show();
     }
 
