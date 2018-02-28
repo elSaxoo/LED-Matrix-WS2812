@@ -1,29 +1,22 @@
 #ifndef LEDBASEMATRIX_H
 #define LEDBASEMATRIX_H
 
-#include "Arduino.h"
-//#define __ASSERT_USE_STDERR
-#include <stdint.h>
-#include <assert.h>
-#include <FastLED.h>
+
+#include <LEDMatrix.h>
 
 #define DEBUG true
 #define CONSTRUCTOR_DEBUG false
+#define ASSERT_CHECK true
 
 namespace LEDArrangement
 {
 
-typedef uint8_t UINT_8;
-typedef uint16_t UINT_16;
-
-enum class Wiring_Start_Point {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
-enum class Strip_Orientation {ALIGN_HORIZONTAL, ZIGZAG_HORIZONTAL, ALIGN_VERTICAL, ZIGZAG_VERTICAL};
 
 
 // Achtung template-Klasse
 // Implementierung aller Methoden findet in der Header-Datei statt
-template<UINT_8 width, UINT_8 height>
-class LEDbaseMatrix
+template<UINT_8 height, UINT_8 width>
+class LEDbaseMatrix : public LEDMatrix<height, width>
 {
     public:
    
@@ -33,13 +26,13 @@ class LEDbaseMatrix
     // Kein Kopierkonstruktor zulassen
     // -> LEDbaseMatrix-Objekte können nicht per call-by-value an Funktion übergeben werden,
     // nur noch mit call-by-reference (Zeiger oder Referenz)
-    LEDbaseMatrix(const LEDbaseMatrix<width, height>&) = delete;
+    LEDbaseMatrix(const LEDbaseMatrix<height, width>&) = delete;
 
     
     // Zuweisungsoperator
     // Verschiedene baseMatrizen könne einander Zugewiesen werden, solange sie verschiedene FastLED-Referenzen haben
     // und die gleiche Größe haben
-    void operator=(const LEDbaseMatrix<width, height>& other_mat);
+    void operator=(const LEDbaseMatrix<height, width>& other_mat);
 
 
     // Getter-Methoden für Dimensionen der Matrix
@@ -87,9 +80,10 @@ class LEDbaseMatrix
 }; // End of Class
 
 
-template<UINT_8 width, UINT_8 height>
-LEDbaseMatrix<width, height>::LEDbaseMatrix(CRGBArray<width * height>& leds, Wiring_Start_Point wiring_start_point, Strip_Orientation strip_orientation)
+template<UINT_8 height, UINT_8 width>
+LEDbaseMatrix<height, width>::LEDbaseMatrix(CRGBArray<width * height>& leds, Wiring_Start_Point wiring_start_point, Strip_Orientation strip_orientation)
 :
+    LEDMatrix<height, width>(), // Konstruktor Basis-Klasse aufrufen
     wiring_start_point(wiring_start_point),
     strip_orientation(strip_orientation),
     complete_strip(leds)
@@ -99,19 +93,19 @@ LEDbaseMatrix<width, height>::LEDbaseMatrix(CRGBArray<width * height>& leds, Wir
     this->complete_strip[width*height - 1] = this->complete_strip[width*height - 1]; // Falls LED-Streifen zu kurz Fehler beim Zugriff auf LED-Array
 }
 
-template<UINT_8 width, UINT_8 height>
-void LEDbaseMatrix<width, height>::operator=(const LEDbaseMatrix<width, height>& other_mat)
+template<UINT_8 height, UINT_8 width>
+void LEDbaseMatrix<height, width>::operator=(const LEDbaseMatrix<height, width>& other_mat)
 {
     // Zuwweisung auf sich selbst prüfen
     if (this == &other_mat)
-        return
+        return;
 
     // Gleiche Dimensionen ist eigentlich durch gleiche Template-Parameter sichergestellt
-    assert(this->matrix_width() == other_mat.matrix_width());
-    assert(this->matrix_height() == other_mat.matrix_height());
+    if(ASSERT_CHECK)    assert(this->matrix_width() == other_mat.matrix_width());
+    if(ASSERT_CHECK)    assert(this->matrix_height() == other_mat.matrix_height());
 
     // Sicherstellen, dass die baseMatrizen Referenzen auf verschiedene FastLED-Arrays haben
-    assert(&(this->complete_strip) != &(other_mat.complete_strip));
+    if(ASSERT_CHECK)    assert(&(this->complete_strip) != &(other_mat.complete_strip));
 
     // Einzelne Pixel Kopieren
     for(UINT_8 i = 0; i < height; ++i)
@@ -125,12 +119,12 @@ void LEDbaseMatrix<width, height>::operator=(const LEDbaseMatrix<width, height>&
 }
 
 // Berechnet die Position des FastLED-Pixels aus den Matrix-Koordinaten
-template<UINT_8 width, UINT_8 height>
-UINT_16 LEDbaseMatrix<width, height>::calc_pixel_position(UINT_8 row, UINT_8 column) const
+template<UINT_8 height, UINT_8 width>
+UINT_16 LEDbaseMatrix<height, width>::calc_pixel_position(UINT_8 row, UINT_8 column) const
 {
     // Sicherstellen, das gültige Parameter übergeben wurden
-    assert(row < height);
-    assert(column < width);
+    if(ASSERT_CHECK)    assert(row < height);
+    if(ASSERT_CHECK)    assert(column < width);
 
     // LED-Position, die zu den Matrix-Koordinaten gehört
     // wird in switch-case-Statement berechnet
@@ -262,7 +256,7 @@ UINT_16 LEDbaseMatrix<width, height>::calc_pixel_position(UINT_8 row, UINT_8 col
     }
 
     // Berechnete Position auf Gültigkeit prüfen
-    assert(led_position < width*height);
+    if(ASSERT_CHECK)    assert(led_position < width*height);
 
     // FastLED-Pixel-Referenz zurückgeben
     return led_position;
@@ -272,8 +266,8 @@ UINT_16 LEDbaseMatrix<width, height>::calc_pixel_position(UINT_8 row, UINT_8 col
 // Mit dem weitergearbeitet werden kann
 // z.B this->pixel(0,0) = CRGB(255,0,0) // Pixel (0,0) der Matrix die Farbe Rot zuweisen
 // z.B this->pixel(0,0) = this->pixel(9,29) // Pixel (0,0) auf die gleiche Farbe setzen wie Pixel(9,29)
-template<UINT_8 width, UINT_8 height>
-CRGB& LEDbaseMatrix<width, height>::pixel(UINT_8 row, UINT_8 column)
+template<UINT_8 height, UINT_8 width>
+CRGB& LEDbaseMatrix<height, width>::pixel(UINT_8 row, UINT_8 column)
 {
     return this->complete_strip[this->calc_pixel_position(row, column)];
 }
@@ -282,16 +276,16 @@ CRGB& LEDbaseMatrix<width, height>::pixel(UINT_8 row, UINT_8 column)
 // Mit dem weitergearbeitet werden kann
 // z.B this->pixel(0,0) = CRGB(255,0,0) // Pixel (0,0) der Matrix die Farbe Rot zuweisen
 // z.B this->pixel(0,0) = this->const_pixel(9,29) // Pixel (0,0) auf die gleiche Farbe setzen wie Pixel(9,29)
-template<UINT_8 width, UINT_8 height>
-const CRGB& LEDbaseMatrix<width, height>::const_pixel(UINT_8 row, UINT_8 column) const
+template<UINT_8 height, UINT_8 width>
+const CRGB& LEDbaseMatrix<height, width>::const_pixel(UINT_8 row, UINT_8 column) const
 {
     // Referenz wird beim Rückgeben in konstante Referent gecastet
     return this->complete_strip[this->calc_pixel_position(row, column)];
 }
 
 
-template<UINT_8 width, UINT_8 height>
-void LEDbaseMatrix<width, height>::color_all(const CRGB& color)
+template<UINT_8 height, UINT_8 width>
+void LEDbaseMatrix<height, width>::color_all(const CRGB& color)
 {
     for(UINT_16 i=0; i < width*height; ++i)
     {
@@ -300,8 +294,8 @@ void LEDbaseMatrix<width, height>::color_all(const CRGB& color)
 }
 
 
-template<UINT_8 width, UINT_8 height>
-void LEDbaseMatrix<width, height>::color_all(const CHSV& color)
+template<UINT_8 height, UINT_8 width>
+void LEDbaseMatrix<height, width>::color_all(const CHSV& color)
 {
     // Farbe von HSV nach RGB konvertieren
     // und Methode erneut aufrufen
@@ -309,16 +303,16 @@ void LEDbaseMatrix<width, height>::color_all(const CHSV& color)
 }
 
 
-template<UINT_8 width, UINT_8 height>
-void LEDbaseMatrix<width, height>::all_off()
+template<UINT_8 height, UINT_8 width>
+void LEDbaseMatrix<height, width>::all_off()
 {
     // Alle LED auf schwarz setzen
     this->color_all(CRGB(0,0,0));
 }
 
 
-template<UINT_8 width, UINT_8 height>
-void LEDbaseMatrix<width, height>::self_test()
+template<UINT_8 height, UINT_8 width>
+void LEDbaseMatrix<height, width>::self_test()
 {
     const uint32_t delay_time_ms = 15000/300;
     // erst alle ausschalten
@@ -384,8 +378,8 @@ void LEDbaseMatrix<width, height>::self_test()
 }
 
 
-template<UINT_8 width, UINT_8 height>
-void LEDbaseMatrix<width, height>::strip_test()
+template<UINT_8 height, UINT_8 width>
+void LEDbaseMatrix<height, width>::strip_test()
 {
 
     const uint32_t delay_time_ms = 15000/300;

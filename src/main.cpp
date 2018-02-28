@@ -1,8 +1,10 @@
+
+
 #include <Arduino.h>
 #include <FastLED.h>
-#include "LEDbaseMatrix.h"
-#include "LEDsubMatrix.h"
-#include "applications.h"
+#include <LEDbaseMatrix.h>
+#include <LEDsubMatrix.h>
+#include <applications.h>
 
 #define DEBUG true
 
@@ -14,7 +16,7 @@ CRGBArray<NUM_LEDS> leds;
 // Eine LED-Matrix erstellen
 LEDArrangement::LEDbaseMatrix<30, 10> base_mat(leds, LEDArrangement::Wiring_Start_Point::TOP_RIGHT, LEDArrangement::Strip_Orientation::ZIGZAG_HORIZONTAL);
 
-LEDArrangement::LEDMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 30, 8> sub_mat_time(base_mat, 0, 1);
+LEDArrangement::LEDsubMatrix<LEDArrangement::LEDbaseMatrix<30, 10>, 30, 8> sub_mat_time(base_mat, 0, 1);
 
 
 void setup() {
@@ -50,9 +52,9 @@ void loop() {
     // put your main code here, to run repeatedly:
 
     // Die LED-Matrix testen
-    if(DEBUG) Serial.println("base self_test");
+    //if(DEBUG) Serial.println("base self_test");
     // base_mat.self_test();
-    if(DEBUG) Serial.println("all self_test complete");
+    //if(DEBUG) Serial.println("all self_test complete");
 
 
     LEDArrangement::print_string(sub_mat_time, "15:20", CRGB(255,0,0));
