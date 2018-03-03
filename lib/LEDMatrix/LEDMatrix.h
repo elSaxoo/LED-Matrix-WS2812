@@ -5,12 +5,10 @@
 #include <Arduino.h>
 //#define __ASSERT_USE_STDERR
 #include <stdint.h>
-#include <assert.h>
 #include <FastLED.h>
 
-#define DEBUG true
-#define CONSTRUCTOR_DEBUG false
-#define ASSERT_CHECK true
+
+
 
 
 namespace LEDArrangement
@@ -34,12 +32,12 @@ class LEDMatrix
     virtual const UINT_8 matrix_height() const =0;
 
     // Berechnet die Position des FastLED-Pixels aus den Matrix-Koordinaten
-    virtual UINT_16 calc_pixel_position(UINT_8 row, UINT_8 column) const =0;
+    virtual UINT_16 calc_pixel_position(const UINT_8 row, const UINT_8 column) const =0;
 
     // Gibt eine Referenz auf das FastLED-Pixel zurück 
     // Mit dem weitergearbeitet werden kann
-    virtual CRGB& pixel(UINT_8 row, UINT_8 column) =0;
-    virtual const CRGB& const_pixel(UINT_8 row, UINT_8 column) const =0;
+    virtual CRGB& pixel(const UINT_8 row, const UINT_8 column) =0;
+    virtual const CRGB& const_pixel(const UINT_8 row, const UINT_8 column) const =0;
 
     // Alle LEDs färben
     virtual void color_all(const CRGB& color) =0;

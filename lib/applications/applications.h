@@ -4,10 +4,12 @@
 
 #include <LEDMatrix.h>
 
-
-#define DEBUG true
-#define CONSTRUCTOR_DEBUG false
+#include <debugging.h>
+#define DEBUGGING true
+#define CONSTRUCTOR_DEBUGGING false
 #define ASSERT_CHECK true
+
+
 
 namespace LEDArrangement
 {
@@ -181,7 +183,8 @@ namespace LEDArrangement
         int text_length = text.length();
 
         // Testen ob Submatrix hoch genug ist für die Zeichen
-        if(ASSERT_CHECK)    assert(char_height <= height);
+        if(DEBUGGING)    DEBUG(String("Testen ob Submatrix hoch genug ist für die Zeichen") + (char_height <= height ? "true" : "false"));
+        if(ASSERT_CHECK)    TEST(char_height <= height);
 
 
         // Buchstaben durchlaufen bis das Stringende erreicht wurde
@@ -212,7 +215,7 @@ namespace LEDArrangement
             // Leerzeile nach dem Buchstaben, indem einfach eine Reihe auf der Submatrix übersprungen wird.
             ++k;
         }
-        if(DEBUG) Serial.println("printed " + '"' + text + '"');
+        if(DEBUGGING)    DEBUG("printed " + '"' + text + '"');
         FastLED.show();
     }
 
@@ -229,8 +232,10 @@ namespace LEDArrangement
     void print_char(LEDMatrix& mat, const char character, const CRGB color, const CRGB background = CRGB(0,0,0))
     {
         // Sicherstellen, das Matrix größ genug ist
-        if(ASSERT_CHECK)    assert(mat.matrix_height() >= char_height);
-        if(ASSERT_CHECK)    assert(mat.matrix_width() >= char_width);
+        if(DEBUGGING)    DEBUG(String("Testing Matrix height") + (mat.matrix_height() >= char_height ? "true" : "false"));
+        if(DEBUGGING)    DEBUG(String("Testing Matrix width") + (mat.matrix_width() >= char_width ? "true" : "false"));
+        if(ASSERT_CHECK)    TEST(mat.matrix_height() >= char_height);
+        if(ASSERT_CHECK)    TEST(mat.matrix_width() >= char_width);
 
         // Bitmap aus font-Array ermitteln
         const UINT_8* const character_bitmap = font[(const UINT_8) character]; // Hier wird nur ein Zeiger gespeichert
@@ -240,32 +245,23 @@ namespace LEDArrangement
         {
 
             // Debug Ausgaben
-            if(DEBUG)   Serial.println("Setting up column " + String(j));
+            if(DEBUGGING)    DEBUG("Setting up column " + String(j));
 
             // Für jede Zeile der Spalte
             for(UINT_8 i = 0; i < char_height; ++i)
             {
 
                 // Debug Ausgaben
-                if(DEBUG)   Serial.print("Setting up row " + String(i) + "\t");
-
-                // Debug Ausgaben
-                if(DEBUG)   Serial.print("Testing: " + String(character_bitmap[j] & (1<<i)) + "\t");
+               if(DEBUGGING)     DEBUG("Setting up row " + String(i) + "\t" + "Testing: " + String(character_bitmap[j] & (1<<i)) + "\t" + (character_bitmap[j] & (1<<i) ? "Character" : "Backgroung"));
 
                 // Wenn das Bit der font an der Position i gesetzt ist...
                 if(character_bitmap[j] & (1<<i))
-                {
-                    // Debug Ausgaben
-                    if(DEBUG)   Serial.println("Character");
-
+                {    
                     // ...gehört das Pixel (i,j) zum Buchstaben
                     mat.pixel(i,j) = color;
                 }
                 else
                 {
-                    // Debug Ausgaben
-                    if(DEBUG)   Serial.println("Backgroung");
-
                     // ...ansonste ist es Hintergrund
                     mat.pixel(i,j) = background;
                 }
@@ -274,8 +270,8 @@ namespace LEDArrangement
 
         // Nachdem die Pixel passen gesetzt wurde
         // kann der Buchstabe angezeigt werden
-        if(DEBUG) Serial.println("printed " + character);
         FastLED.show();
+        if(DEBUGGING)    DEBUG("printed " + character);
     }
 
     // Print-Funktion von SvenJupiter
@@ -290,7 +286,8 @@ namespace LEDArrangement
     void print_string(LEDMatrix& mat, const char* const text, const CRGB color, const CRGB background = CRGB(0,0,0), const UINT_8 space_between_characters = 1)
     {
         // Sicherstellen, das Matrix hoch genug für Zeichen ist
-        if(ASSERT_CHECK)    assert(mat.matrix_height() >= char_height);
+        if(DEBUGGING)    DEBUG(String("Testing Matrix height") + (mat.matrix_height() >= char_height ? "true" : "false"));
+        if(ASSERT_CHECK)    TEST(mat.matrix_height() >= char_height);
 
         // Zeilen-Offset für Buchstaben
         UINT_8 colum_offset;
@@ -299,20 +296,20 @@ namespace LEDArrangement
         for(UINT_8 i = 0; text[i] != '\0'; ++i)
         {
             // Debug Ausgaben
-            if(DEBUG)   Serial.println("Trying to print "+ String(i+1) + ". char '" + text[i] + "'");
+            if(DEBUGGING)    DEBUG("Trying to print "+ String(i+1) + ". char '" + text[i] + "'");
 
             // Zeilen-Offset für nächsten Buchstabe ermitteln
             colum_offset = i * (char_width + space_between_characters);
 
             // Debug Ausgaben
-            if(DEBUG)   Serial.println("Space check");
+            if(DEBUGGING)    DEBUG("Space check");
 
             // Wenn kein weiterer Buchstabe auf die Matrix passt
             if(colum_offset + char_width > mat.matrix_width())
             {
                 // Debug Ausgaben
-                if(DEBUG)   Serial.println("No more space available");
-                if(DEBUG)   Serial.println("Breaking from loop");
+                if(DEBUGGING)    DEBUG("No more space available");
+                if(DEBUGGING)    DEBUG("Breaking from loop");
 
                 // for-Schleife vorzeitig beenden
                 break;
@@ -320,8 +317,8 @@ namespace LEDArrangement
             else
             {               
                 // Debug Ausgaben
-                if(DEBUG)   Serial.println("Space available");
-                if(DEBUG)   Serial.println("Printing char " + text[i]);
+                if(DEBUGGING)    DEBUG("Space available");
+                if(DEBUGGING)    DEBUG("Printing char " + text[i]);
 
                 // Eine Submatrix erstellen
                 LEDsubMatrix<char_height, char_width> sub_mat(mat, 0, colum_offset);
@@ -332,7 +329,7 @@ namespace LEDArrangement
         }
 
         // Debug Ausgaben
-        if(DEBUG)   Serial.println("done");
+        if(DEBUGGING)    DEBUG("done");
     }
 
 

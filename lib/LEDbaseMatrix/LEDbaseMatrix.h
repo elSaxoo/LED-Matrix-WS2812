@@ -4,9 +4,11 @@
 
 #include <LEDMatrix.h>
 
-#define DEBUG true
-#define CONSTRUCTOR_DEBUG false
+#include <debugging.h>
+#define DEBUGGING true
+#define CONSTRUCTOR_DEBUGGING false
 #define ASSERT_CHECK true
+
 
 namespace LEDArrangement
 {
@@ -40,14 +42,14 @@ class LEDbaseMatrix : public LEDMatrix
     const UINT_8 matrix_height() const {return height;}
 
     // Berechnet die Position des FastLED-Pixels aus den Matrix-Koordinaten
-    UINT_16 calc_pixel_position(UINT_8 row, UINT_8 column) const;
+    UINT_16 calc_pixel_position(const UINT_8 row, const UINT_8 column) const;
 
     // Gibt eine Referenz auf das FastLED-Pixel zurück 
     // Mit dem weitergearbeitet werden kann
     // z.B this->pixel(0,0) = CRGB(255,0,0) // Pixel (0,0) der Matrix die Farbe Rot zuweisen
     // z.B this->pixel(0,0) = this->pixel(9,29) // Pixel (0,0) auf die gleiche Farbe setzen wie Pixel(9,29)
-    CRGB& pixel(UINT_8 row, UINT_8 column);
-    const CRGB& const_pixel(UINT_8 row, UINT_8 column) const;
+    CRGB& pixel(const UINT_8 row, const UINT_8 column);
+    const CRGB& const_pixel(const UINT_8 row, const UINT_8 column) const;
 
     // Zum Testen ob alle LEDs funktionieren
     // Nachdem die Methoden ausgeführt wurden, muss FastLED.show() aufgerufen werden,
@@ -83,12 +85,11 @@ class LEDbaseMatrix : public LEDMatrix
 template<UINT_8 height, UINT_8 width>
 LEDbaseMatrix<height, width>::LEDbaseMatrix(CRGBArray<width * height>& leds, Wiring_Start_Point wiring_start_point, Strip_Orientation strip_orientation)
 :
-    LEDMatrix(), // Konstruktor Basis-Klasse aufrufen
     wiring_start_point(wiring_start_point),
     strip_orientation(strip_orientation),
     complete_strip(leds)
 {
-    if(CONSTRUCTOR_DEBUG)   Serial.println("base const");
+    if(CONSTRUCTOR_DEBUGGING)    DEBUG("base const");
     // Parameter überprüfen
     this->complete_strip[width*height - 1] = this->complete_strip[width*height - 1]; // Falls LED-Streifen zu kurz Fehler beim Zugriff auf LED-Array
 }
@@ -101,11 +102,11 @@ void LEDbaseMatrix<height, width>::operator=(const LEDbaseMatrix<height, width>&
         return;
 
     // Gleiche Dimensionen ist eigentlich durch gleiche Template-Parameter sichergestellt
-    if(ASSERT_CHECK)    assert(this->matrix_width() == other_mat.matrix_width());
-    if(ASSERT_CHECK)    assert(this->matrix_height() == other_mat.matrix_height());
+    if(ASSERT_CHECK)    ASSERT(this->matrix_width() == other_mat.matrix_width());
+    if(ASSERT_CHECK)    ASSERT(this->matrix_height() == other_mat.matrix_height());
 
     // Sicherstellen, dass die baseMatrizen Referenzen auf verschiedene FastLED-Arrays haben
-    if(ASSERT_CHECK)    assert(&(this->complete_strip) != &(other_mat.complete_strip));
+    if(ASSERT_CHECK)    ASSERT(&(this->complete_strip) != &(other_mat.complete_strip));
 
     // Einzelne Pixel Kopieren
     for(UINT_8 i = 0; i < height; ++i)
@@ -120,11 +121,14 @@ void LEDbaseMatrix<height, width>::operator=(const LEDbaseMatrix<height, width>&
 
 // Berechnet die Position des FastLED-Pixels aus den Matrix-Koordinaten
 template<UINT_8 height, UINT_8 width>
-UINT_16 LEDbaseMatrix<height, width>::calc_pixel_position(UINT_8 row, UINT_8 column) const
+UINT_16 LEDbaseMatrix<height, width>::calc_pixel_position(const UINT_8 row, const UINT_8 column) const
 {
     // Sicherstellen, das gültige Parameter übergeben wurden
-    if(ASSERT_CHECK)    assert(row < height);
-    if(ASSERT_CHECK)    assert(column < width);
+    if(DEBUGGING)    DEBUG(String("baseMatrix calc_pixel_position() row check") + (row < height ? "true" : "false"));
+    if(DEBUGGING)    DEBUG(String("baseMatrix calc_pixel_position() column check") + (column < width ? "true" : "false"));
+
+    if(ASSERT_CHECK)    TEST(row < height);
+    if(ASSERT_CHECK)    TEST(column < width);
 
     // LED-Position, die zu den Matrix-Koordinaten gehört
     // wird in switch-case-Statement berechnet
@@ -256,7 +260,8 @@ UINT_16 LEDbaseMatrix<height, width>::calc_pixel_position(UINT_8 row, UINT_8 col
     }
 
     // Berechnete Position auf Gültigkeit prüfen
-    if(ASSERT_CHECK)    assert(led_position < width*height);
+    if(DEBUGGING)    DEBUG(String("Check if LED-Position is valid") + String(led_position) + (led_position < width*height ? "true" : "false"));
+    if(ASSERT_CHECK)    TEST(led_position < width*height);
 
     // FastLED-Pixel-Referenz zurückgeben
     return led_position;
@@ -267,7 +272,7 @@ UINT_16 LEDbaseMatrix<height, width>::calc_pixel_position(UINT_8 row, UINT_8 col
 // z.B this->pixel(0,0) = CRGB(255,0,0) // Pixel (0,0) der Matrix die Farbe Rot zuweisen
 // z.B this->pixel(0,0) = this->pixel(9,29) // Pixel (0,0) auf die gleiche Farbe setzen wie Pixel(9,29)
 template<UINT_8 height, UINT_8 width>
-CRGB& LEDbaseMatrix<height, width>::pixel(UINT_8 row, UINT_8 column)
+CRGB& LEDbaseMatrix<height, width>::pixel(const UINT_8 row, const UINT_8 column)
 {
     return this->complete_strip[this->calc_pixel_position(row, column)];
 }
@@ -277,7 +282,7 @@ CRGB& LEDbaseMatrix<height, width>::pixel(UINT_8 row, UINT_8 column)
 // z.B this->pixel(0,0) = CRGB(255,0,0) // Pixel (0,0) der Matrix die Farbe Rot zuweisen
 // z.B this->pixel(0,0) = this->const_pixel(9,29) // Pixel (0,0) auf die gleiche Farbe setzen wie Pixel(9,29)
 template<UINT_8 height, UINT_8 width>
-const CRGB& LEDbaseMatrix<height, width>::const_pixel(UINT_8 row, UINT_8 column) const
+const CRGB& LEDbaseMatrix<height, width>::const_pixel(const UINT_8 row, const UINT_8 column) const
 {
     // Referenz wird beim Rückgeben in konstante Referent gecastet
     return this->complete_strip[this->calc_pixel_position(row, column)];
@@ -327,7 +332,7 @@ void LEDbaseMatrix<height, width>::self_test()
         {
             this->pixel(i,j) = red;
             FastLED.show();
-            if(DEBUG)   Serial.print("baseLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" red");
+            if(DEBUGGING)    DEBUG("baseLED " + String(i) + "x" + String(j) + " red");
             delay(delay_time_ms);
         }
     }
@@ -340,7 +345,7 @@ void LEDbaseMatrix<height, width>::self_test()
         {
             this->pixel(i,j) = green;
             FastLED.show();
-            if(DEBUG)   Serial.print("baseLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" green");
+            if(DEBUGGING)    DEBUG("baseLED " + String(i) + "x" + String(j) + " green");
             delay(delay_time_ms);
         }
     }
@@ -353,7 +358,7 @@ void LEDbaseMatrix<height, width>::self_test()
         {
             this->pixel(i,j) = blue;
             FastLED.show();
-            if(DEBUG)   Serial.print("baseLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" blue");
+            if(DEBUGGING)    DEBUG("baseLED " + String(i) + "x" + String(j) + " blue");
             delay(delay_time_ms);
         }
     }
@@ -366,7 +371,7 @@ void LEDbaseMatrix<height, width>::self_test()
         {
             this->pixel(i,j) = white;
             FastLED.show();
-            if(DEBUG)   Serial.print("baseLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" white");
+            if(DEBUGGING)    DEBUG("baseLED " + String(i) + "x" + String(j) + " white");
             delay(delay_time_ms);
         }
     }
@@ -392,7 +397,7 @@ void LEDbaseMatrix<height, width>::strip_test()
     {
         this->complete_strip[i] = red;
         FastLED.show();
-        if(DEBUG)   Serial.print("LED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.println(" red");
+        if(DEBUGGING)    DEBUG("LED " + String(i) + " red");
         delay(delay_time_ms);
     }
 
@@ -402,7 +407,7 @@ void LEDbaseMatrix<height, width>::strip_test()
     {
         this->complete_strip[i] = green;
         FastLED.show();
-        if(DEBUG)   Serial.print("LED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.println(" green");
+        if(DEBUGGING)    DEBUG("LED " + String(i) + " green");
         delay(delay_time_ms);
     }
 
@@ -412,7 +417,7 @@ void LEDbaseMatrix<height, width>::strip_test()
     {
         this->complete_strip[i] = blue;
         FastLED.show();
-        if(DEBUG)   Serial.print("LED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.println(" blue");
+        if(DEBUGGING)    DEBUG("LED " + String(i) + " blue");
         delay(delay_time_ms);
     }
 
@@ -422,7 +427,7 @@ void LEDbaseMatrix<height, width>::strip_test()
     {
         this->complete_strip[i] = white;
         FastLED.show();
-        if(DEBUG)   Serial.print("LED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.println(" white");
+        if(DEBUGGING)    DEBUG("LED " + String(i) + " white");
         delay(delay_time_ms);
     }
 
