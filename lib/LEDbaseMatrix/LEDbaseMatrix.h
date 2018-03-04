@@ -18,7 +18,7 @@ namespace LEDArrangement
 // Achtung template-Klasse
 // Implementierung aller Methoden findet in der Header-Datei statt
 template<UINT_8 height, UINT_8 width>
-class LEDbaseMatrix : public LEDMatrix
+class LEDbaseMatrix
 {
     public:
    
