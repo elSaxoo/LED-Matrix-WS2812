@@ -1,8 +1,8 @@
 #include "LEDMatrix.h"
 #include <debugging.h>
 
-#define DEBUGGING true
-#define CONSTRUCTOR_DEBUGGING true
+#define DEBUGGING false
+#define CONSTRUCTOR_DEBUGGING false
 #define ASSERT_CHECK true
 
 

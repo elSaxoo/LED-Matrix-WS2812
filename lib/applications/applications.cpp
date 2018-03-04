@@ -182,6 +182,40 @@ namespace LEDArrangement
     }
 
 
+    
+    // Die Matrix über die serielle Schnittstelle mit Daten versorgen
+    void serial_matrix_updater(HardwareSerial& UART, LEDMatrix& mat)
+    {
+
+        // Signalisieren, dass Arduino bereit ist
+        UART.write(0x05); // ENQ
+
+        while(true)
+        {
+            // Für jedes Pixel in der Matrix
+            for(UINT_16 i = 0; i < mat.number_of_leds(); ++i)
+            {
+                // Rot einlesen
+                while(!UART.available());
+                mat[i].r = UART.read();
+
+                // Grün einlesen
+                while(!UART.available()); 
+                mat[i].g = UART.read();
+
+                // Blau einlesen
+                while(!UART.available()); 
+                mat[i].b = UART.read();
+            }
+
+            // Bild anzeigen
+            FastLED.show();
+
+            // Signalisieren, dass Arduino komplettes Bild empfangen hat
+            UART.write(0x06); // ACK
+        }
+    }
+
 
 
 

@@ -25,38 +25,14 @@ void setup() {
 
     FastLED.setBrightness(64);
     FastLED.addLeds<NEOPIXEL,PIN>(leds, NUM_LEDS);
+    base_mat.all_off();
 
     Serial.begin(115200);
     delay(100);
 
-    // Debug-Funktionen-Test
-
-    if(DEBUGGING)    
-        {DEBUG("Hello...");}
-
-    if(ASSERT_CHECK)    
-        {TEST( 5 > 3 );}
-
-    if(ASSERT_CHECK)    
-        {ASSERT( 3 < 5 );}
-
-
-
     if(DEBUGGING)    
         {DEBUG("Waiting 2 sek...");}
-
     delay(2000);
-
-
-    if(DEBUGGING)
-    {DEBUG("Init FastLED");}
-
-
-    if(DEBUGGING)    
-        {DEBUG("base all_off");}
-    base_mat.all_off();
-
-    delay(1000);
 
 
     if(DEBUGGING)   

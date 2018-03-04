@@ -191,7 +191,8 @@ namespace LEDArrangement
     // Überladung von print_string für CHSV Farbe
     void print_string(LEDMatrix& mat, const char* const text, const CHSV color, const CHSV background = CHSV(0,0,0), const UINT_8 space_between_characters = 1);
 
-
+    // Die Matrix über die serielle Schnittstelle mit Daten versorgen
+    void serial_matrix_updater(HardwareSerial& UART, LEDMatrix& mat);
 
 
 
