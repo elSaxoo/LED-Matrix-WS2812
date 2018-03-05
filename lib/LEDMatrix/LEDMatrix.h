@@ -24,6 +24,7 @@ typedef int16_t INT_16;
 enum class Wiring_Start_Point {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
 enum class Strip_Orientation {ALIGN_HORIZONTAL, ZIGZAG_HORIZONTAL, ALIGN_VERTICAL, ZIGZAG_VERTICAL};
 enum class MatrixType {BASE_MATRIX, SUB_MATRIX, ROW_VECTOR, COLUMN_VECTOR};
+enum class Direction {UP, DOWN, LEFT, RIGHT};
 
 
 // Virtuelle Basis-Klasse füe alle LED-Matrizen
@@ -78,14 +79,22 @@ public:
     CRGB& pixel(const INT_16 index);
     const CRGB& const_pixel(const INT_16 index) const;
 
-    // []-Operator
-    CRGB& operator[](const INT_16 index) {return this->pixel(index);}
-
-
+    // für << / >>-Operator
     // Einzelne Zeile/Spalte der Matrix zurückgeben
     LEDMatrix get_row(const UINT_16 row);
     LEDMatrix get_column(const UINT_16 column);
 
+    // für << / >>-Operator
+    LEDMatrix& shift(const Direction dir, const UINT_16 shift_width, const CRGB fill_color = CRGB(0,0,0));
+    LEDMatrix& cycle(const Direction dir, const UINT_16 cycle_width);
+
+
+    // []-Operator
+    CRGB& operator [] (const INT_16 index) {return this->pixel(index);}
+
+    // <</>>-Operator 
+    LEDMatrix& operator << (const UINT_16 shift_width) {return this->shift(Direction::LEFT, shift_width);}
+    LEDMatrix& operator >> (const UINT_16 shift_width) {return this->shift(Direction::RIGHT, shift_width);}
 
     // Alle LEDs färben
     void color_all(const CRGB& color);

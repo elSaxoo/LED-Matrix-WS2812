@@ -360,13 +360,250 @@ const CRGB& LEDMatrix::const_pixel(const INT_16 index) const
 // Einzelne Zeile der Matrix zurückgeben
 LEDMatrix LEDMatrix::get_row(const UINT_16 row)
 {
-    return LEDMatrix(*this, MatrixType::ROW_VECTOR, row);
+    LEDMatrix temp(*this, MatrixType::ROW_VECTOR, row);
+    return temp;
 }
 
 // Einzelne Spalte der Matrix zurückgeben
 LEDMatrix LEDMatrix::get_column(const UINT_16 column)
 {
-    return LEDMatrix(*this, MatrixType::COLUMN_VECTOR, column);
+    LEDMatrix temp(*this, MatrixType::COLUMN_VECTOR, column);
+    return temp;
+}
+
+// für << / >>-Operator
+LEDMatrix& LEDMatrix::shift(const Direction dir, const UINT_16 shift_width, const CRGB fill_color)
+{
+    if(shift_width > 0)
+    {
+        switch(dir)
+        {
+            case Direction::UP:
+                if(shift_width < this->sub_height)
+                {
+                    for(UINT_16 i = 0; i < this->sub_height ; ++i)
+                    {
+                        if(i + shift_width < this->sub_height)
+                        {   // Zeilen verschieben
+                            
+                            LEDMatrix old_vec(*this, MatrixType::ROW_VECTOR, i);
+                            LEDMatrix new_vec(*this, MatrixType::ROW_VECTOR, i + shift_width);
+
+                            // Alte Zeile wir mit Farbwerten der neuen Zeile überschrieben.
+                            old_vec = new_vec;
+                        }
+                        else
+                        {   // Zeilen  schwarz färben
+                            this->get_row(i).color_all(fill_color);
+                        }
+                    }
+                }
+                else
+                {
+                    // Alle schwarz färben
+                    this->color_all(fill_color);
+                }
+                return *this;
+            
+            case Direction::DOWN:
+                if(shift_width < this->sub_height)
+                {
+                    for(UINT_16 i = 0; i < this->sub_height ; ++i)
+                    {
+                        if(i + shift_width < this->sub_height)
+                        {   // Zeilen verschieben
+                            
+                            LEDMatrix old_vec(*this, MatrixType::ROW_VECTOR, this->sub_height-1 - i);
+                            LEDMatrix new_vec(*this, MatrixType::ROW_VECTOR, this->sub_height-1 - (i + shift_width));
+
+                            // Alte Zeile wir mit Farbwerten der neuen Zeile überschrieben.
+                            old_vec = new_vec;
+                        }
+                        else
+                        {   // Zeilen  schwarz färben
+                            this->get_row(this->sub_height-1 - i).color_all(fill_color);
+                        }
+                    }
+                }
+                else
+                {
+                    // Alle schwarz färben
+                    this->color_all(fill_color);
+                }
+                return *this;
+            
+            case Direction::LEFT:
+                if(shift_width < this->sub_width)
+                {
+                    for(UINT_16 i = 0; i < this->sub_width ; ++i)
+                    {
+                        if(i + shift_width < this->sub_width)
+                        {   // Spalte verschieben
+                            
+                            LEDMatrix old_vec(*this, MatrixType::COLUMN_VECTOR, i);
+                            LEDMatrix new_vec(*this, MatrixType::COLUMN_VECTOR, i + shift_width);
+
+                            // Alte Spalte wir mit Farbwerten der neuen Spalte überschrieben.
+                            old_vec = new_vec;
+                        }
+                        else
+                        {   // Spalte  schwarz färben
+                            this->get_column(i).color_all(fill_color);
+                        }
+                    }
+                }
+                else
+                {
+                    // Alle schwarz färben
+                    this->color_all(fill_color);
+                }
+                return *this;
+
+            case Direction::RIGHT:
+                if(shift_width < this->sub_width)
+                {
+                    for(UINT_16 i = 0; i < this->sub_width ; ++i)
+                    {
+                        if(i + shift_width < this->sub_width)
+                        {   // Spalte verschieben
+                            
+                            LEDMatrix old_vec(*this, MatrixType::COLUMN_VECTOR, this->sub_width-1 - i);
+                            LEDMatrix new_vec(*this, MatrixType::COLUMN_VECTOR, this->sub_width-1 - (i + shift_width));
+
+                            // Alte Spalte wir mit Farbwerten der neuen Spalte überschrieben.
+                            old_vec = new_vec;
+                        }
+                        else
+                        {   // Spalte  schwarz färben
+                            this->get_column(this->sub_width-1 - i).color_all(fill_color);
+                        }
+                    }
+                }
+                else
+                {
+                    // Alle schwarz färben
+                    this->color_all(fill_color);
+                }
+                return *this;
+
+            default:
+                return *this;
+        }
+    }
+    else
+    {
+        // Alle schwarz färben
+        this->color_all(fill_color);
+        return *this;
+    }
+}
+
+LEDMatrix& LEDMatrix::cycle(const Direction dir, const UINT_16 cycle_width)
+{
+    if(cycle_width > 0)
+    {
+        switch(dir)
+        {
+            case Direction::UP:
+
+            for(UINT_16 k = 0; k < cycle_width; ++k)
+            {
+                // Zwischenspeicher für Pixelfarben
+                CRGB temp[this->sub_width];
+
+                // Zeile die überschrieben wird
+                LEDMatrix old_led_vec(*this, MatrixType::ROW_VECTOR, 0);
+                LEDMatrix new_led_vec(*this, MatrixType::ROW_VECTOR, this->sub_height-1);
+
+                // Alte Farbwerte sichern
+                for(UINT_16 i = 0; i < this->sub_width; ++i)
+                    temp[i] = old_led_vec[i];
+                
+                this->shift(dir, 1);
+
+                // Alte Farbwerte wiederherstellen
+                for(UINT_16 i = 0; i < this->sub_width; ++i)
+                    new_led_vec[i] = temp[i];
+            }   
+            return *this;
+
+            case Direction::DOWN:
+
+            for(UINT_16 k = 0; k < cycle_width; ++k)
+            {
+                // Zwischenspeicher für Pixelfarben
+                CRGB temp[this->sub_width];
+
+                // Zeile die überschrieben wird
+                LEDMatrix old_led_vec(*this, MatrixType::ROW_VECTOR, this->sub_height-1);
+                LEDMatrix new_led_vec(*this, MatrixType::ROW_VECTOR, 0);
+
+                // Alte Farbwerte sichern
+                for(UINT_16 i = 0; i < this->sub_width; ++i)
+                    temp[i] = old_led_vec[i];
+                
+                this->shift(dir, 1);
+
+                // Alte Farbwerte wiederherstellen
+                for(UINT_16 i = 0; i < this->sub_width; ++i)
+                    new_led_vec[i] = temp[i];
+            }
+            return *this;
+
+            case Direction::LEFT:
+
+            for(UINT_16 k = 0; k < cycle_width; ++k)
+            {
+                // Zwischenspeicher für Pixelfarben
+                CRGB temp[this->sub_height];
+
+                // Spalte die überschrieben wird
+                LEDMatrix old_led_vec(*this, MatrixType::COLUMN_VECTOR, 0);
+                LEDMatrix new_led_vec(*this, MatrixType::COLUMN_VECTOR, this->sub_width-1);
+
+                // Alte Farbwerte sichern
+                for(UINT_16 i = 0; i < this->sub_height; ++i)
+                    temp[i] = old_led_vec[i];
+                
+                this->shift(dir, 1);
+
+                // Alte Farbwerte wiederherstellen
+                for(UINT_16 i = 0; i < this->sub_height; ++i)
+                    new_led_vec[i] = temp[i];
+            }   
+            return *this;
+
+            case Direction::RIGHT:
+
+            for(UINT_16 k = 0; k < cycle_width; ++k)
+            {
+                // Zwischenspeicher für Pixelfarben
+                CRGB temp[this->sub_height];
+
+                // Spalte die überschrieben wird
+                LEDMatrix old_led_vec(*this, MatrixType::COLUMN_VECTOR, this->sub_width-1);
+                LEDMatrix new_led_vec(*this, MatrixType::COLUMN_VECTOR, 0);
+
+                // Alte Farbwerte sichern
+                for(UINT_16 i = 0; i < this->sub_height; ++i)
+                    temp[i] = old_led_vec[i];
+                
+                this->shift(dir, 1);
+
+                // Alte Farbwerte wiederherstellen
+                for(UINT_16 i = 0; i < this->sub_height; ++i)
+                    new_led_vec[i] = temp[i];
+            }        
+            return *this;
+
+            default:
+                return *this;
+        }
+    }
+    else
+    {
+        return *this;
+    }
 }
 
 
