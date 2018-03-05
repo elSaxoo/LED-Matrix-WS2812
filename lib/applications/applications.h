@@ -173,7 +173,7 @@ namespace LEDArrangement
 
 
 
-    // Print-Funktion von elSaxoo
+    // Printing strings as ASCII at the matrix
     void print_String(LEDMatrix& mat, const String text, const CRGB color, const CRGB background = CRGB(0,0,0))
     {
         UINT_8 width = mat.matrix_width();
@@ -183,6 +183,8 @@ namespace LEDArrangement
         // Testen ob Submatrix hoch genug ist für die Zeichen
         if(ASSERT_CHECK)    assert(char_height <= height);
 
+        // Fill background with backgroundcolor
+        mat.color_all(background);
 
         // Buchstaben durchlaufen bis das Stringende erreicht wurde
         // oder bis die Breite der SubMatrix erreicht wurde. K ist auch die absolute Reihe
@@ -202,9 +204,6 @@ namespace LEDArrangement
                     if((1<<j) & font[(UINT_8)text.charAt(character)][i]){
                         mat.pixel(j,k) = color;
                     }
-                    else{
-                        mat.pixel(j,k) = background;                      
-                    }
                 }
                 // Nach jeder Abgeschlossenen Zeichenreihe eine Reihe weitergehen auf der Submatrix.
                 ++k;
@@ -216,7 +215,6 @@ namespace LEDArrangement
         FastLED.show();
     }
 
-    // Print-Funktion von elSaxoo
     // Überladung von print_string für CHSV Farbe
     void print_String(LEDMatrix& mat, const String text, const CHSV color, const CHSV background = CHSV(0,0,0))
     {
@@ -225,7 +223,7 @@ namespace LEDArrangement
 
 
 
-    // Print-Funktion von SvenJupiter
+    // Printing character as ASCII at the matrix
     void print_char(LEDMatrix& mat, const char character, const CRGB color, const CRGB background = CRGB(0,0,0))
     {
         // Sicherstellen, das Matrix größ genug ist
@@ -264,9 +262,9 @@ namespace LEDArrangement
                 else
                 {
                     // Debug Ausgaben
-                    if(DEBUG)   Serial.println("Backgroung");
+                    if(DEBUG)   Serial.println("Background");
 
-                    // ...ansonste ist es Hintergrund
+                    // ...ansonsten ist es Hintergrund
                     mat.pixel(i,j) = background;
                 }
             }

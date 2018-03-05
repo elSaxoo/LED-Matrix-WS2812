@@ -22,7 +22,7 @@ LEDArrangement::LEDsubMatrix<8, 30> sub_mat_time(base_mat, 1, 0);
 void setup() {
     // put your setup code here, to run once:
 
-    Serial.begin(57600);
+    Serial.begin(115200);
     delay(100);
 
     if(DEBUG)   Serial.println("Hello...");
@@ -57,18 +57,17 @@ void loop() {
     // put your main code here, to run repeatedly:
 
     // Die LED-Matrix testen
-    //if(DEBUG) Serial.println("base self_test");
-    // base_mat.self_test();
-    //if(DEBUG) Serial.println("all self_test complete");
+    if(DEBUG) Serial.println("base self_test");
+    base_mat.self_test();
+    if(DEBUG) Serial.println("all self_test complete");
 
-    // elSaxoo print-Funktion
-    if(DEBUG)   Serial.println("Testing elSaxoo print-function");
-    LEDArrangement::print_String(sub_mat_time, "15:20", CRGB(255,0,0));
-    delay(5000);
+    // 
+    //if(DEBUG)   Serial.println("Testing print_String");
+    //LEDArrangement::print_String(sub_mat_time, "15:20", CRGB(255,0,0));
+    //delay(5000);
 
-    // SvenJupiter print-Funktion
-    if(DEBUG)   Serial.println("Testing SvenJupiter print-function");
-    LEDArrangement::print_string(sub_mat_time, "15:20", CRGB(0,255,0));
-    delay(5000);
+    //if(DEBUG)   Serial.println("Testing print_string");
+    //LEDArrangement::print_string(sub_mat_time, "15:20", CRGB(0,255,0));
+    //delay(5000);
 
 }
