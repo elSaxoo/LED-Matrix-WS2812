@@ -49,16 +49,18 @@ void loop() {
     // if(DEBUGGING)    DEBUG("all self_test complete");
 
     // // elSaxoo print-Funktion
-    if(DEBUGGING)   
+    if(DEBUGGING){
         DEBUG("Testing elSaxoo print-function");
-    LEDArrangement::print_String(sub_mat_time, '', CRGB(255,0,0));
-    delay(5);
+    }
+    LEDArrangement::print_String(sub_mat_time, "!", CRGB(255,0,0));
+    delay(2000);
 
     // // SvenJupiter print-Funktion
-    // if(DEBUGGING)    
-    //     DEBUG("Testing SvenJupiter print-function");
-    // LEDArrangement::print_string(sub_mat_time, "15:20", CRGB(0,255,0));
-    // delay(5000);
+    // if(DEBUGGING){
+    //    DEBUG("Testing SvenJupiter print-function");
+    // }
+    // LEDArrangement::print_string(sub_mat_time, "!", CRGB(0,255,0));
+    // delay(2000);
 
 }
 

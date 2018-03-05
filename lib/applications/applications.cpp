@@ -2,7 +2,7 @@
 
 
 #include <debugging.h>
-#define DEBUGGING true
+#define DEBUGGING false
 #define CONSTRUCTOR_DEBUGGING false
 #define ASSERT_CHECK true
 
@@ -32,17 +32,19 @@ namespace LEDArrangement
         // in der Submatrix zum setzen der Pixel.
         UINT_8 k = 0;
         for(UINT_8 character = 0; character < text_length && k < width; ++character){
-
             // Zeichenreihen eines Zeichens durchlaufen bis zum Zeichenende.
             for(UINT_8 i = 0; i < char_width && k < width; ++i){
 
                 // Zeilen innerhalb der Zeichenreihe durchlaufen, um die Pixel von Oben nach unten 
                 // in der Zeichenreihe i an der absoluten Stelle k zu setzen.
+
+                const UINT_8 column_bitmap = pgm_read_byte(&font[(UINT_8)(text.charAt(character))][i]);
+
                 for(UINT_8 j = 0; j < char_height; ++j){
 
                     // Wenn Bit im Zeichenbyte an der Stelle j 1 ist, dann setz meinen Pixel auf color.
                     // An der absoluten Stelle (j,k) in der Submatrix.
-                    if((1<<j) & font[(UINT_8)text.charAt(character)][i]){
+                    if((1<<j) & column_bitmap){
                         mat.pixel(j,k) = color;
                     }
                     else{
