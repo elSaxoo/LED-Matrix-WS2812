@@ -22,7 +22,7 @@ LEDArrangement::LEDMatrix sub_mat_time(base_mat, 8, 30, 1, 0);
 void setup() {
     // put your setup code here, to run once:
 
-    FastLED.setBrightness(64);
+    FastLED.setBrightness(8);
     FastLED.addLeds<NEOPIXEL,PIN>(leds, NUM_LEDS);
     base_mat.all_off();
 
@@ -39,13 +39,13 @@ void setup() {
 
 
     // Symbol auf Matrix anzeigen
-    LEDArrangement::print_char(sub_mat_time, 'A', CRGB(0,255,0));
+    LEDArrangement::print_String(sub_mat_time, "abcde", CRGB(0,255,0));
     delay(500);
 
     // Symbol in Mitte der Matrix schieben
-    sub_mat_time.shift(LEDArrangement::Direction::RIGHT, 15-3) ;
-    FastLED.show();
-    delay(200);
+    // sub_mat_time.shift(LEDArrangement::Direction::RIGHT, 15-3) ;
+    // FastLED.show();
+    // delay(200);
 
 
 }
