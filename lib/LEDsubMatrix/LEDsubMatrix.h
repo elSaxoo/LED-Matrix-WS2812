@@ -4,32 +4,36 @@
 
 #include <LEDMatrix.h>
 
-#define DEBUG true
-#define CONSTRUCTOR_DEBUG false
+
+#include <debugging.h>
+#define DEBUGGING true
+#define CONSTRUCTOR_DEBUGGING false
 #define ASSERT_CHECK true
+
 
 namespace LEDArrangement
 {
 
 // Achtung template-Klasse
 // Implementierung aller Methoden findet in der Header-Datei statt
-template<UINT_8 height, UINT_8 width>
-class LEDsubMatrix : public LEDMatrix
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+class LEDsubMatrix
 {
     public:
     // Konstruktor
-    LEDsubMatrix(LEDMatrix& mat, UINT_8 Row_Offset, UINT_8 Column_Offset);
+    LEDsubMatrix(LED_Matrix& mat, UINT_8 Row_Offset, UINT_8 Column_Offset);
 
 
     // Kein Kopierkonstruktor zulassen
     // -> LEDsubMatrix-Objekte könne nicht per call-by-value an Funktion übergeben werden, 
-    // nur noch mit call-by-reference (Zeiger oder Referenz)
-    LEDsubMatrix(const LEDsubMatrix<height, width>&) = delete;
+    // nur noch mit call-by-reference (Zeiger oder Referenz) 
+    LEDsubMatrix(const LEDsubMatrix<LED_Matrix, height, width>&) = delete;
     
     // Zuweisungsoperator
     // Verschiedene SubMatrizen könne einander Zugewiesen werden, solange sie sich nicht überschneiden
     // und die gleiche Größe haben
-    void operator=(const LEDsubMatrix<height, width>& other_mat);  
+    template<typename OTHER_BASE_MAT>
+    void operator=(const LEDsubMatrix<OTHER_BASE_MAT, height, width>& other_mat);  
 
 
     // Getter-Methoden für Dimensionen der Matrix
@@ -41,15 +45,14 @@ class LEDsubMatrix : public LEDMatrix
     const UINT_8 matrix_column_offset() const {return column_offset;}
 
     // Berechnet die Position des FastLED-Pixels aus den Matrix-Koordinaten
-    UINT_16 calc_pixel_position(UINT_8 row, UINT_8 column) const;
+    UINT_16 calc_pixel_position(const UINT_8 row, const UINT_8 column) const;
 
     // Gibt eine Referenz auf das FastLED-Pixel zurück 
     // Mit dem weitergearbeitet werden kann
     // z.B this->pixel(0,0) = CRGB(255,0,0) // Pixel (0,0) der Matrix die Farbe Rot zuweisen
     // z.B this->pixel(0,0) = this->pixel(9,29) // Pixel (0,0) auf die gleiche Farbe setzen wie Pixel(9,29)
-    CRGB& pixel(UINT_8 row, UINT_8 column);
-    const CRGB& const_pixel(UINT_8 row, UINT_8 column) const;
-
+    CRGB& pixel(const UINT_8 row, const UINT_8 column);
+    const CRGB& const_pixel(const UINT_8 row, const UINT_8 column) const;
 
 
     // Zum Testen ob alle LEDs funktionieren
@@ -70,37 +73,36 @@ class LEDsubMatrix : public LEDMatrix
     const UINT_8 row_offset;
     const UINT_8 column_offset;
 
-    LEDMatrix& base_matrix;
+    LED_Matrix& base_matrix;
 
 };
 
 
 
 
-template<UINT_8 height, UINT_8 width>
-LEDsubMatrix<height, width>::LEDsubMatrix(LEDMatrix& mat, UINT_8 Row_Offset, UINT_8 Column_Offset)
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+LEDsubMatrix<LED_Matrix, height, width>::LEDsubMatrix(LED_Matrix& mat, UINT_8 Row_Offset, UINT_8 Column_Offset)
 :
-    LEDMatrix(), // Konstruktor Basis-Klasse aufrufen
+    
     row_offset(Row_Offset),
     column_offset(Column_Offset),
     base_matrix(mat)
 {
-    if(CONSTRUCTOR_DEBUG)   Serial.println("sub const");
-    if(CONSTRUCTOR_DEBUG)   Serial.print("Cc "); 
-    if(CONSTRUCTOR_DEBUG)   Serial.println(this->column_offset + width <= this->base_matrix.matrix_width());
-    if(CONSTRUCTOR_DEBUG)   Serial.print("Rc "); 
-    if(CONSTRUCTOR_DEBUG)   Serial.println(this->row_offset + height <= this->base_matrix.matrix_height());
-    if(CONSTRUCTOR_DEBUG)   while(Serial.available());
+    if(DEBUGGING)    DEBUG("sub const");
+    if(DEBUGGING)    DEBUG("Cc " + String(this->column_offset + width <= this->base_matrix.matrix_width())); 
+    if(DEBUGGING)    DEBUG("Rc " + String(this->row_offset + height <= this->base_matrix.matrix_height())); 
+
     
     // Parameter überprüfen
-    if(ASSERT_CHECK)    assert(this->column_offset + width <= this->base_matrix.matrix_width());
-    if(ASSERT_CHECK)    assert(this->row_offset + height <= this->base_matrix.matrix_height());
+    if(ASSERT_CHECK)    ASSERT(this->column_offset + width <= this->base_matrix.matrix_width());
+    if(ASSERT_CHECK)    ASSERT(this->row_offset + height <= this->base_matrix.matrix_height());
 
 }
 
 // Funktioniert noch nicht!!!
-template<UINT_8 height, UINT_8 width>
-void LEDsubMatrix<height, width>::operator=(const LEDsubMatrix<height, width>& other_mat)
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+template<typename OTHER_BASE_MAT>
+void LEDsubMatrix<LED_Matrix, height, width>::operator=(const LEDsubMatrix<OTHER_BASE_MAT, height, width>& other_mat)
 {
 
     // Zuwweisung auf sich selbst prüfen
@@ -108,19 +110,19 @@ void LEDsubMatrix<height, width>::operator=(const LEDsubMatrix<height, width>& o
         return;
 
     // Gleiche Dimensionen ist eigentlich durch gleiche Template-Parameter sichergestellt
-    if(ASSERT_CHECK)    assert(this->matrix_width() == other_mat.matrix_width());
-    if(ASSERT_CHECK)    assert(this->matrix_height() == other_mat.matrix_height());
+    if(ASSERT_CHECK)    ASSERT(this->matrix_width() == other_mat.matrix_width());
+    if(ASSERT_CHECK)    ASSERT(this->matrix_height() == other_mat.matrix_height());
 
     // Die Matrix mit dem jeweils kleineren und Offset bestimmen
-    LEDsubMatrix<height, width>& min_row_mat = (this->row_offset < other_mat.row_offset ? *this : other_mat);
-    LEDsubMatrix<height, width>& min_column_mat = (this->column_offset < other_mat.column_offset ? *this : other_mat);
+    LEDsubMatrix<LED_Matrix, height, width>& min_row_mat = (this->row_offset < other_mat.row_offset ? *this : other_mat);
+    LEDsubMatrix<LED_Matrix, height, width>& min_column_mat = (this->column_offset < other_mat.column_offset ? *this : other_mat);
     
     // Die Matrix mit dem jeweils größeren Offset bestimmen
-    LEDsubMatrix<height, width>& max_row_mat = (this->row_offset >= other_mat.row_offset ? *this : other_mat);
-    LEDsubMatrix<height, width>& max_column_mat = (this->column_offset >= other_mat.column_offset ? *this : other_mat);
+    LEDsubMatrix<LED_Matrix, height, width>& max_row_mat = (this->row_offset >= other_mat.row_offset ? *this : other_mat);
+    LEDsubMatrix<LED_Matrix, height, width>& max_column_mat = (this->column_offset >= other_mat.column_offset ? *this : other_mat);
 
     // Sicherstellen, das die Offsets nicht gleich sind
-    if(ASSERT_CHECK)    assert(this->row_offset != other_mat.row_offset && this->column_offset != other_mat.column_offset);
+    if(ASSERT_CHECK)    ASSERT(this->row_offset != other_mat.row_offset && this->column_offset != other_mat.column_offset);
 
     // Überlappung prüfen
     bool overlapping;
@@ -141,7 +143,7 @@ void LEDsubMatrix<height, width>::operator=(const LEDsubMatrix<height, width>& o
             overlapping = true;
         }
     }
-    if(ASSERT_CHECK)    assert(overlapping == false);
+    if(ASSERT_CHECK)    ASSERT(overlapping == false);
 
     // Einzelne Pixel kopieren
     for(UINT_8 i = 0; i < height; ++i)
@@ -155,41 +157,47 @@ void LEDsubMatrix<height, width>::operator=(const LEDsubMatrix<height, width>& o
 }
 
 
-template<UINT_8 height, UINT_8 width>
-UINT_16 LEDsubMatrix<height, width>::calc_pixel_position(UINT_8 row, UINT_8 column) const
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+UINT_16 LEDsubMatrix<LED_Matrix, height, width>::calc_pixel_position(const UINT_8 row, const UINT_8 column) const
 {
     // Sicherstellen, das gültige Parameter übergeben wurden
-    if(ASSERT_CHECK)    assert(row < height);
-    if(ASSERT_CHECK)    assert(column < width);
+    if(DEBUGGING)    DEBUG(String("subMatrix calc_pixel_position() row check") + (row < height ? "true" : "false"));
+    if(DEBUGGING)    DEBUG(String("subMatrix calc_pixel_position() column check")  + (column < width ? "true" : "false"));
+    if(ASSERT_CHECK)    TEST( row < height);
+    if(ASSERT_CHECK)    TEST(column < width);
 
     return this->base_matrix.calc_pixel_position(row + this->row_offset, column + this->column_offset);
 }
 
 
-template<UINT_8 height, UINT_8 width>
-CRGB& LEDsubMatrix<height, width>::pixel(UINT_8 row, UINT_8 column)
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+CRGB& LEDsubMatrix<LED_Matrix, height, width>::pixel(const UINT_8 row, const UINT_8 column)
 {
     // Sicherstellen, das gültige Parameter übergeben wurden
-    if(ASSERT_CHECK)    assert(row < height);
-    if(ASSERT_CHECK)    assert(column < width);
+    if(DEBUGGING)    DEBUG(String("subMatrix pixel() row check") + (row < height ? "true" : "false"));
+    if(DEBUGGING)    DEBUG(String("subMatrix pixel() column check") + (column < width ? "true" : "false"));
+    if(ASSERT_CHECK)    TEST( row < height);
+    if(ASSERT_CHECK)    TEST(column < width);
 
     return this->base_matrix.pixel(row + this->row_offset, column + this->column_offset);
 }
 
 
-template<UINT_8 height, UINT_8 width>
-const CRGB& LEDsubMatrix<height, width>::const_pixel(UINT_8 row, UINT_8 column) const
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+const CRGB& LEDsubMatrix<LED_Matrix, height, width>::const_pixel(const UINT_8 row, const UINT_8 column) const
 {
     // Sicherstellen, das gültige Parameter übergeben wurden
-    if(ASSERT_CHECK)    assert(row < height);
-    if(ASSERT_CHECK)    assert(column < width);
+    if(DEBUGGING)    DEBUG(String("subMatrix const_pixel() row check") + (row < height ? "true" : "false"));
+    if(DEBUGGING)    DEBUG(String("subMatrix const_pixel() column check") + (column < width ? "true" : "false"));
+    if(ASSERT_CHECK)    TEST( row < height);
+    if(ASSERT_CHECK)    TEST(column < width);
 
     return this->base_matrix.const_pixel(row + this->row_offset, column + this->column_offset);
 }
 
 
-template<UINT_8 height, UINT_8 width>
-void LEDsubMatrix<height, width>::color_all(const CRGB& color)
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+void LEDsubMatrix<LED_Matrix, height, width>::color_all(const CRGB& color)
 {
     for(UINT_8 i = 0; i < height; i++)
     {
@@ -201,8 +209,8 @@ void LEDsubMatrix<height, width>::color_all(const CRGB& color)
 }
 
 
-template<UINT_8 height, UINT_8 width>
-void LEDsubMatrix<height, width>::color_all(const CHSV& color)
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+void LEDsubMatrix<LED_Matrix, height, width>::color_all(const CHSV& color)
 {
     // Farbe von HSV nach RGB konvertieren
     // und Methode erneut aufrufen
@@ -210,15 +218,15 @@ void LEDsubMatrix<height, width>::color_all(const CHSV& color)
 }
 
 
-template<UINT_8 height, UINT_8 width>
-void LEDsubMatrix<height, width>::all_off()
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+void LEDsubMatrix<LED_Matrix, height, width>::all_off()
 {
     this->color_all(CRGB(0,0,0));
 }
 
 
-template<UINT_8 height, UINT_8 width>
-void LEDsubMatrix<height, width>::self_test()
+template<typename LED_Matrix, UINT_8 height, UINT_8 width>
+void LEDsubMatrix<LED_Matrix, height, width>::self_test()
 {
     const uint32_t delay_time_ms = 15000/300 * ((width*height)/(this->base_matrix.matrix_width()*this->base_matrix.matrix_height()));
     // erst alle ausschalten
@@ -233,7 +241,7 @@ void LEDsubMatrix<height, width>::self_test()
         {
             this->pixel(i,j) = red;
             FastLED.show();
-            if(DEBUG)   Serial.print("subLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" red");
+            if(DEBUGGING)    DEBUG("subLED " + String(i) + "x" + String(j) + " red");
             delay(delay_time_ms);
         }
     }
@@ -246,7 +254,7 @@ void LEDsubMatrix<height, width>::self_test()
         {
             this->pixel(i,j) = green;
             FastLED.show();
-            if(DEBUG)   Serial.print("subLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" green");
+            if(DEBUGGING)    DEBUG("subLED " + String(i) + "x" + String(j) + " green");
             delay(delay_time_ms);
         }
     }
@@ -259,7 +267,7 @@ void LEDsubMatrix<height, width>::self_test()
         {
             this->pixel(i,j) = blue;
             FastLED.show();
-            if(DEBUG)   Serial.print("subLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" blue");
+            if(DEBUGGING)    DEBUG("subLED " + String(i) + "x" + String(j) + " blue");
             delay(delay_time_ms);
         }
     }
@@ -272,7 +280,7 @@ void LEDsubMatrix<height, width>::self_test()
         {
             this->pixel(i,j) = white;
             FastLED.show();
-            if(DEBUG)   Serial.print("subLED "); if(DEBUG)   Serial.print(i); if(DEBUG)   Serial.print('x'); if(DEBUG)   Serial.print(j); if(DEBUG)   Serial.println(" white");
+            if(DEBUGGING)    DEBUG("subLED " + String(i) + "x" + String(j) + " white");
             delay(delay_time_ms);
         }
     }
