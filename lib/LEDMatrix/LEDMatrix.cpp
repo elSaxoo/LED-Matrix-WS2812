@@ -356,6 +356,20 @@ const CRGB& LEDMatrix::const_pixel(const INT_16 index) const
 }
 
 
+
+// Einzelne Zeile der Matrix zurückgeben
+LEDMatrix LEDMatrix::get_row(const UINT_16 row)
+{
+    return LEDMatrix(*this, MatrixType::ROW_VECTOR, row);
+}
+
+// Einzelne Spalte der Matrix zurückgeben
+LEDMatrix LEDMatrix::get_column(const UINT_16 column)
+{
+    return LEDMatrix(*this, MatrixType::COLUMN_VECTOR, column);
+}
+
+
 // Alle LEDs färben - RGB
 void LEDMatrix::color_all(const CRGB& color)
 {

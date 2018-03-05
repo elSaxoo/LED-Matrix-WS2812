@@ -74,16 +74,17 @@ public:
     CRGB& pixel(const INT_16 row, const INT_16 column);
     const CRGB& const_pixel(const INT_16 row, const INT_16 column) const;
 
-    // Einzelne Zeile/ Spalte der Matrix zurückgeben
-    // LEDMatrix get_row(const UINT_16 row);
-    // LEDMatrix get_column(const UINT_16 column);
-
     // für []-Operator
     CRGB& pixel(const INT_16 index);
     const CRGB& const_pixel(const INT_16 index) const;
 
     // []-Operator
     CRGB& operator[](const INT_16 index) {return this->pixel(index);}
+
+
+    // Einzelne Zeile/Spalte der Matrix zurückgeben
+    LEDMatrix get_row(const UINT_16 row);
+    LEDMatrix get_column(const UINT_16 column);
 
 
     // Alle LEDs färben
