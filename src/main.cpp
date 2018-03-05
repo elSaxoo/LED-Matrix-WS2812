@@ -49,10 +49,10 @@ void loop() {
     // if(DEBUGGING)    DEBUG("all self_test complete");
 
     // // elSaxoo print-Funktion
-    // if(DEBUGGING)   
-    //     DEBUG("Testing elSaxoo print-function");
-    // LEDArrangement::print_String(sub_mat_time, "15:20", CRGB(255,0,0));
-    // delay(5000);
+    if(DEBUGGING)   
+        DEBUG("Testing elSaxoo print-function");
+    LEDArrangement::print_String(sub_mat_time, '', CRGB(255,0,0));
+    delay(5);
 
     // // SvenJupiter print-Funktion
     // if(DEBUGGING)    
