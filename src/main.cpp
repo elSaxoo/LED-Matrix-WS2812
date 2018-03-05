@@ -37,30 +37,41 @@ void setup() {
     if(DEBUGGING)   
         DEBUG("...setup complete");
 
+
+    // Symbol auf Matrix anzeigen
+    LEDArrangement::print_char(sub_mat_time, 'A', CRGB(0,255,0));
+    delay(500);
+
+    // Symbol in Mitte der Matrix schieben
+    sub_mat_time.shift(LEDArrangement::Direction::RIGHT, 15-3) ;
+    FastLED.show();
+    delay(200);
+
+
 }
 
 void loop() {
     // put your main code here, to run repeatedly:
 
-    // Die LED-Matrix testen
-    // if(DEBUGGING)    
-    //     DEBUG("base self_test");
-    // base_mat.self_test();
-    // if(DEBUGGING)    DEBUG("all self_test complete");
 
-    // // elSaxoo print-Funktion
-    if(DEBUGGING){
-        DEBUG("Testing elSaxoo print-function");
+    // Symbol über Matrix schieben
+    for(uint8_t i = 0; i < 60; ++i)
+    {
+        sub_mat_time.cycle(LEDArrangement::Direction::RIGHT, 1);
+        FastLED.show();
+        delay(200);
     }
-    LEDArrangement::print_String(sub_mat_time, "!", CRGB(255,0,0));
-    delay(2000);
 
-    // // SvenJupiter print-Funktion
-    // if(DEBUGGING){
-    //    DEBUG("Testing SvenJupiter print-function");
-    // }
-    // LEDArrangement::print_string(sub_mat_time, "!", CRGB(0,255,0));
-    // delay(2000);
+    // Symbol in andere Richtung schieben
+    for(uint8_t i = 0; i < 60; ++i)
+    {
+        sub_mat_time.cycle(LEDArrangement::Direction::LEFT, 1);
+        FastLED.show();
+        delay(200);
+    }
+
+    delay(500);
+
 
 }
 
