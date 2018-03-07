@@ -36,10 +36,6 @@ void setup()
     if (DEBUGGING)
         DEBUG("...setup complete");
 
-    // Symbol auf Matrix anzeigen
-    LEDArrangement::print_String(sub_mat_time, "abcde", CRGB(0, 255, 0));
-    delay(500);
-
     // Symbol in Mitte der Matrix schieben
     // sub_mat_time.shift(LEDArrangement::Direction::RIGHT, 15-3) ;
     // FastLED.show();
@@ -49,21 +45,14 @@ void setup()
 void loop()
 {
     // put your main code here, to run repeatedly:
+    // Trun all LEDs off.
 
     // Symbol über Matrix schieben
-    for (uint8_t i = 0; i < 60; ++i)
+    for (uint8_t i = 0; i < 26*6; ++i)
     {
-        sub_mat_time.cycle(LEDArrangement::Direction::RIGHT, 1);
+        print_String(sub_mat_time, "abcdefghijklmnopqrstuvwxyz", CRGB(0, 0, 255), i);
         FastLED.show();
-        delay(200);
-    }
-
-    // Symbol in andere Richtung schieben
-    for (uint8_t i = 0; i < 60; ++i)
-    {
-        sub_mat_time.cycle(LEDArrangement::Direction::LEFT, 1);
-        FastLED.show();
-        delay(200);
+        delay(1000);
     }
 
     delay(500);
