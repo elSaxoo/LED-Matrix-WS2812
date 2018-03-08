@@ -50,7 +50,7 @@ void loop()
     // Symbol über Matrix schieben
     for (uint8_t i = 0; i < 26*6; ++i)
     {
-        print_String(sub_mat_time, "abcdefghijklmnopqrstuvwxyz", CRGB(0, 0, 255), i);
+        show_string(sub_mat_time, "abcdefghijklmnopqrstuvwxyz", CRGB(0, 0, 255), i, false);
         FastLED.show();
         delay(1000);
     }

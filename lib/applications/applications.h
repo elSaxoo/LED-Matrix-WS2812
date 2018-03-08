@@ -8,10 +8,10 @@ namespace LEDArrangement
 {
 
 // Print-Funktion von elSaxoo
-void print_String(LEDMatrix &mat, const String text, const CRGB color = CRGB(0, 0, 255), const int8_t shift_horizontal = 0, const bool begin_right, const CRGB background = CRGB(0, 0, 0));
+void show_string(LEDMatrix &mat, const String text, const CRGB color = CRGB(0, 0, 255), const int8_t shift_horizontal = 0, const bool begin_right = false, const CRGB background = CRGB(0, 0, 0));
 
 // Überladung von print_String für CHSV Farbe
-void print_String(LEDMatrix &mat, const String text, const CHSV color, const int8_t shift_horizontal = 0, const bool begin_right = false, const CHSV background = CHSV(0, 0, 0));
+void show_string(LEDMatrix &mat, const String text, const CHSV color, const int8_t shift_horizontal = 0, const bool begin_right = false, const CHSV background = CHSV(0, 0, 0));
 
 // Print-Funktion von SvenJupiter
 void print_char(LEDMatrix &mat, const char character, const CRGB color, const CRGB background = CRGB(0, 0, 0));
