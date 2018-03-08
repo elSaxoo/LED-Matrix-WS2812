@@ -33,7 +33,7 @@ void setup()
     }
     delay(2000);
 
-    if (DEBUGGING)
+        if (DEBUGGING)
         DEBUG("...setup complete");
 
     // Symbol in Mitte der Matrix schieben
