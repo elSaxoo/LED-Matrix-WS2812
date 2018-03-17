@@ -1,5 +1,7 @@
 #include "applications.h"
 
+#include <FontBitmap.h>
+
 #include <debugging.h>
 #define DEBUGGING false
 #define CONSTRUCTOR_DEBUGGING false
@@ -30,22 +32,22 @@ namespace LEDArrangement
 
 // PROGMEM Macro plaziert Array in ROM-Speicher
 const PROGMEM UINT_8 font[128][char_width + 1] = {
-    {0x6C, 0x82, 0x82, 0x6C, 0x00, 5}, // 7-Segment 0
-    {0x00, 0x00, 0x00, 0x6C, 0x00, 5}, // 7-Segment 1
-    {0x60, 0x92, 0x92, 0x0C, 0x00, 5}, // 7-Segment 2
-    {0x00, 0x92, 0x92, 0x6C, 0x00, 5}, // 7-Segment 3
-    {0x0C, 0x10, 0x10, 0x6C, 0x00, 5}, // 7-Segment 4
-    {0x0C, 0x92, 0x92, 0x60, 0x00, 5}, // 7-Segment 5
+    {0x6C, 0x82, 0x82, 0x6C, 0x00, 4}, // 7-Segment 0
+    {0x00, 0x00, 0x00, 0x6C, 0x00, 4}, // 7-Segment 1
+    {0x60, 0x92, 0x92, 0x0C, 0x00, 4}, // 7-Segment 2
+    {0x00, 0x92, 0x92, 0x6C, 0x00, 4}, // 7-Segment 3
+    {0x0C, 0x10, 0x10, 0x6C, 0x00, 4}, // 7-Segment 4
+    {0x0C, 0x92, 0x92, 0x60, 0x00, 4}, // 7-Segment 5
     {0x6C, 0x92, 0x92, 0x60, 0x80, 5}, // 7-Segment 6
-    {0x00, 0x02, 0x02, 0x6C, 0x00, 5}, // 7-Segment 7
-    {0x6C, 0x92, 0x92, 0x6C, 0x00, 5}, // 7-Segment 8
+    {0x00, 0x02, 0x02, 0x6C, 0x00, 4}, // 7-Segment 7
+    {0x6C, 0x92, 0x92, 0x6C, 0x00, 4}, // 7-Segment 8
     {0x0C, 0x92, 0x92, 0x6C, 0x80, 5}, // 7-Segment 9
-    {0x6C, 0x12, 0x12, 0x6C, 0x00, 5}, // 7-Segment A
-    {0x6C, 0x90, 0x90, 0x60, 0x00, 5}, // 7-Segment B
-    {0x6C, 0x82, 0x82, 0x00, 0x00, 5}, // 7-Segment C
-    {0x60, 0x90, 0x90, 0x6C, 0x00, 5}, // 7-Segment D
-    {0x6C, 0x92, 0x92, 0x00, 0x00, 5}, // 7-Segment E
-    {0x6C, 0x12, 0x12, 0x00, 0x00, 5}, // 7-Segment F
+    {0x6C, 0x12, 0x12, 0x6C, 0x00, 4}, // 7-Segment A
+    {0x6C, 0x90, 0x90, 0x60, 0x00, 4}, // 7-Segment B
+    {0x6C, 0x82, 0x82, 0x00, 0x00, 4}, // 7-Segment C
+    {0x60, 0x90, 0x90, 0x6C, 0x00, 4}, // 7-Segment D
+    {0x6C, 0x92, 0x92, 0x00, 0x00, 4}, // 7-Segment E
+    {0x6C, 0x12, 0x12, 0x00, 0x00, 4}, // 7-Segment F
     {0x00, 0x00, 0x00, 0x00, 0x00, 5},
     {0x00, 0x00, 0x00, 0x00, 0x00, 5},
     {0x00, 0x00, 0x00, 0x00, 0x00, 5},
@@ -74,9 +76,9 @@ const PROGMEM UINT_8 font[128][char_width + 1] = {
     {0x41, 0x22, 0x1C, 0x00, 0x00, 3}, // )
     {0x14, 0x08, 0x3E, 0x08, 0x14, 5}, // *
     {0x08, 0x08, 0x3E, 0x08, 0x08, 5}, // +
-    {0x50, 0x30, 0x00, 0x00, 0x00, 5}, // ,
+    {0x50, 0x30, 0x00, 0x00, 0x00, 2}, // ,
     {0x08, 0x08, 0x08, 0x08, 0x08, 5}, // -
-    {0x60, 0x60, 0x00, 0x00, 0x00, 5}, // .
+    {0x60, 0x60, 0x00, 0x00, 0x00, 2}, // .
     {0x20, 0x10, 0x08, 0x04, 0x02, 5}, // /
     {0x3E, 0x51, 0x49, 0x45, 0x3E, 5}, // 0
     {0x42, 0x7F, 0x40, 0x00, 0x00, 3}, // 1
@@ -249,30 +251,32 @@ void show_string(LEDMatrix &mat, const String text, const CHSV color, const int8
     show_string(mat, text, CRGB(color), shift_horizontal, begin_right, CRGB(background));
 }
 
+
+
+
+
+
+
+
 // Print-Funktion von SvenJupiter
-void print_char(LEDMatrix &mat, const char character, const CRGB color, const CRGB background)
+void print_char(LEDMatrix &mat, const Font::CharBitmap& character_bitmap, const CRGB color, const CRGB background)
 {
     // Sicherstellen, das Matrix größ genug ist
     if (DEBUGGING)
-        DEBUG(String("Printing char " + character));
+        DEBUG(String("Testing Matrix height ") + (mat.matrix_height() >= character_bitmap.height() ? "true" : "false"));
     if (DEBUGGING)
-        DEBUG(String("Testing Matrix height ") + (mat.matrix_height() >= char_height ? "true" : "false"));
-    if (DEBUGGING)
-        DEBUG(String("Testing Matrix width ") + (mat.matrix_width() >= char_width ? "true" : "false"));
+        DEBUG(String("Testing Matrix width ") + (mat.matrix_width() >= character_bitmap.width() ? "true" : "false"));
     if (ASSERT_CHECK)
-        TEST(mat.matrix_height() >= char_height);
+        TEST(mat.matrix_height() >= character_bitmap.height());
     if (ASSERT_CHECK)
-        TEST(mat.matrix_width() >= char_width);
-
-    // Char-Bitmap aus font-Array ermitteln
-    const UINT_8 *const character_bitmap = font[(const UINT_8)character]; // Hier wird nur ein Zeiger gespeichert
+        TEST(mat.matrix_width() >= character_bitmap.width());
 
     // Für jede Spalte der Matrix
-    for (UINT_8 j = 0; j < char_width; ++j)
+    for (UINT_8 j = 0; j < character_bitmap.width(); ++j)
     {
 
         // Column-Bitmap-Wert aus Flashspeicher holen
-        const UINT_8 column_bitmap = pgm_read_byte(&character_bitmap[j]); // Hier wird Zeiger an Funktion übergeben
+        const Font::ColumnBitmap column_bitmap(character_bitmap[j]); // Hier wird Wert aus Flash-Speicher geladen
 
         // Debug Ausgaben
         if (DEBUGGING)
@@ -287,10 +291,10 @@ void print_char(LEDMatrix &mat, const char character, const CRGB color, const CR
 
             // Debug Ausgaben
             if (DEBUGGING)
-                DEBUG("Setting up row " + String(i) + "\t" + "Testing: " + String(column_bitmap & (1 << i)) + "\t" + (column_bitmap & (1 << i) ? "Character" : "Backgroung"));
+                DEBUG("Setting up row " + String(i) + "\t" + "Testing: " + String(column_bitmap[i]) + "\t" + (column_bitmap[i] ? "Character" : "Backgroung"));
 
             // Wenn das Bit der font an der Position i gesetzt ist...
-            if (column_bitmap & (1 << i))
+            if (column_bitmap[i])
             {
                 // ...gehört das Pixel (i,j) zum Buchstaben
                 mat.pixel(i, j) = color;
@@ -306,6 +310,20 @@ void print_char(LEDMatrix &mat, const char character, const CRGB color, const CR
     // Nachdem die Pixel passen gesetzt wurde
     // kann der Buchstabe angezeigt werden
     FastLED.show();
+}
+
+// Print-Funktion von SvenJupiter
+void print_char(LEDMatrix &mat, const char character, const CRGB color, const CRGB background)
+{
+    // Char-Bitmap aus Flashspeicher holen
+    const Font::CharBitmap character_bitmap(Font::font_bitmap[character]); // Hier wird nur ein Zeiger geladen
+
+    if (DEBUGGING)
+        DEBUG(String("Printing char " + character));
+
+    // Zeichen ausgeben
+    print_char(mat, character_bitmap, color, background);
+
     if (DEBUGGING)
         DEBUG("printed " + character);
 }
@@ -317,17 +335,20 @@ void print_char(LEDMatrix &mat, const char character, const CHSV color, const CH
     print_char(mat, character, CRGB(color), CRGB(background));
 }
 
+
+
 // Print-Funktion von SvenJupiter
 void print_string(LEDMatrix &mat, const char *const text, const CRGB color, const CRGB background, const UINT_8 space_between_characters)
 {
+
     // Sicherstellen, das Matrix hoch genug für Zeichen ist
     if (DEBUGGING)
-        DEBUG(String("Testing Matrix height \t") + (mat.matrix_height() >= char_height ? "true" : "false"));
+        DEBUG(String("Testing Matrix height \t") + (mat.matrix_height() >= 8 ? "true" : "false"));
     if (ASSERT_CHECK)
-        TEST(mat.matrix_height() >= char_height);
+        TEST(mat.matrix_height() >= 8);
 
     // Zeilen-Offset für Buchstaben
-    UINT_8 colum_offset;
+    UINT_8 colum_offset = 0;
 
     // Für jeden Buchstaben in text
     for (UINT_8 i = 0; text[i] != '\0'; ++i)
@@ -336,22 +357,20 @@ void print_string(LEDMatrix &mat, const char *const text, const CRGB color, cons
         if (DEBUGGING)
             DEBUG("Trying to print " + String(i + 1) + ". char \t'" + text[i] + "'");
 
-        // Zeilen-Offset für nächsten Buchstabe ermitteln
-        colum_offset = i * (char_width + space_between_characters);
+        // Char-Bitmap aus Flashspeicher holen
+        const Font::CharBitmap character_bitmap(Font::font_bitmap[text[i]]); // Hier wird nur ein Zeiger geladen
 
         // Debug Ausgaben
         if (DEBUGGING)
             DEBUG("Space check");
 
         // Wenn kein weiterer Buchstabe auf die Matrix passt
-        if (((UINT_8)(colum_offset + char_width)) > mat.matrix_width())
+        if (((UINT_8)(colum_offset + character_bitmap.width())) > mat.matrix_width())
         {
             // Debug Ausgaben
             if (DEBUGGING)
-                DEBUG("No more space available");
-            if (DEBUGGING)
-                DEBUG("Breaking from loop");
-
+                DEBUG("No more space available - Breaking from loop");
+                
             // for-Schleife vorzeitig beenden
             break;
         }
@@ -364,10 +383,13 @@ void print_string(LEDMatrix &mat, const char *const text, const CRGB color, cons
                 DEBUG("Printing char " + text[i]);
 
             // Eine Submatrix erstellen
-            LEDMatrix sub_mat(mat, char_height, char_width, 0, colum_offset);
+            LEDMatrix sub_mat(mat, character_bitmap.height(), character_bitmap.width(), 0, colum_offset);
 
             // Buchstaben auf der Submatrix ausgeben
-            print_char(sub_mat, text[i], color, background);
+            print_char(sub_mat, character_bitmap, color, background);
+
+            // Zeilen-Offset für nächsten Buchstabe ermitteln
+            colum_offset += character_bitmap.width() + space_between_characters;
         }
     }
 

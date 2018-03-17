@@ -2,6 +2,7 @@
 #include <FastLED.h>
 #include <LEDMatrix.h>
 #include <applications.h>
+#include <FontBitmap.h>
 
 #include <debugging.h>
 #define DEBUGGING true
@@ -29,23 +30,56 @@ void setup()
 
     if (DEBUGGING)
     {
-        DEBUG("Waiting 2 sek...");
+        DEBUG("Starting Setup...");
     }
-    delay(2000);
+    delay(1000);
 
-        if (DEBUGGING)
-        DEBUG("...setup complete");
 
     // Symbol in Mitte der Matrix schieben
     // sub_mat_time.shift(LEDArrangement::Direction::RIGHT, 15-3) ;
     // FastLED.show();
     // delay(200);
+
+    if(DEBUGGING)
+    {
+        // [][][]-Operator Test
+        // Zugriff über [][][]-Operator ist ineffizient
+        // aber einfach
+        // siehe "FontBitmap.h" für effizienteren Weg
+        for(char test_char = 0; test_char < 127; ++test_char){
+            Serial.println(String("Test char = '") + test_char + String("'"));
+            for(int i = 0; i < LEDArrangement::Font::font_bitmap[test_char].height(); ++i) {
+                for(int j = 0; j < LEDArrangement::Font::font_bitmap[test_char].width(); ++j) {
+                    if(LEDArrangement::Font::font_bitmap[test_char][j][i]) {
+                        Serial.print("*");
+                    }
+                    else {
+                        Serial.print(" ");
+                    }
+                }
+                Serial.println();
+            }
+        }
+
+        DEBUG("Font Test");
+        // Testen, ob Font-Konstanten richtig aus PROGMEM-Speicher gelesen werden
+        // Ausgabe der Konstanten auf dem Serial Moitor
+        LEDArrangement::Font::test_PROGMEM_access();
+    }
+
+    // Überarbeite print-Funktion testen
+    // Achte mal darauf, ob schmalere Buchstaben nun auch weniger Platz einnehmen
+    LEDArrangement::print_string(sub_mat_time, "1.Kai!!");
+    delay(60000);
+
+
+    if (DEBUGGING)
+        DEBUG("...Setup complete");
 }
 
 void loop()
 {
     // put your main code here, to run repeatedly:
-    // Trun all LEDs off.
 
     // Symbol über Matrix schieben
     for (uint8_t i = 0; i < 26*6; ++i)
