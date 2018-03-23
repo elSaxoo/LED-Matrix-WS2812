@@ -9,22 +9,22 @@ namespace Font
 
 
 // Die einzelnen Bitmaps
-const PROGMEM uint8_t char_bitmap_000[] = {0x6C, 0x82, 0x82, 0x6C};          // 7-Segment 0
-const PROGMEM uint8_t char_bitmap_001[] = {0x00, 0x00, 0x00, 0x6C};          // 7-Segment 1
-const PROGMEM uint8_t char_bitmap_002[] = {0x60, 0x92, 0x92, 0x0C};          // 7-Segment 2
-const PROGMEM uint8_t char_bitmap_003[] = {0x00, 0x92, 0x92, 0x6C};          // 7-Segment 3
-const PROGMEM uint8_t char_bitmap_004[] = {0x0C, 0x10, 0x10, 0x6C};          // 7-Segment 4
-const PROGMEM uint8_t char_bitmap_005[] = {0x0C, 0x92, 0x92, 0x60};          // 7-Segment 5
-const PROGMEM uint8_t char_bitmap_006[] = {0x6C, 0x92, 0x92, 0x60, 0x80};    // 7-Segment 6
-const PROGMEM uint8_t char_bitmap_007[] = {0x00, 0x02, 0x02, 0x6C};          // 7-Segment 7
-const PROGMEM uint8_t char_bitmap_008[] = {0x6C, 0x92, 0x92, 0x6C};          // 7-Segment 8
-const PROGMEM uint8_t char_bitmap_009[] = {0x0C, 0x92, 0x92, 0x6C, 0x80};    // 7-Segment 9
-const PROGMEM uint8_t char_bitmap_010[] = {0x6C, 0x12, 0x12, 0x6C};          // 7-Segment A
-const PROGMEM uint8_t char_bitmap_011[] = {0x6C, 0x90, 0x90, 0x60};          // 7-Segment B
-const PROGMEM uint8_t char_bitmap_012[] = {0x6C, 0x82, 0x82, 0x00};          // 7-Segment C
-const PROGMEM uint8_t char_bitmap_013[] = {0x60, 0x90, 0x90, 0x6C};          // 7-Segment D
-const PROGMEM uint8_t char_bitmap_014[] = {0x6C, 0x92, 0x92};                // 7-Segment E
-const PROGMEM uint8_t char_bitmap_015[] = {0x6C, 0x12, 0x12};                // 7-Segment F
+const PROGMEM uint8_t char_bitmap_000[] = {0x36, 0x41, 0x41, 0x36};          // 7-Segment 0
+const PROGMEM uint8_t char_bitmap_001[] = {0x36};                            // 7-Segment 1
+const PROGMEM uint8_t char_bitmap_002[] = {0x30, 0x49, 0x49, 0x06};          // 7-Segment 2
+const PROGMEM uint8_t char_bitmap_003[] = {0x49, 0x49, 0x36};                // 7-Segment 3
+const PROGMEM uint8_t char_bitmap_004[] = {0x06, 0x08, 0x08, 0x36};          // 7-Segment 4
+const PROGMEM uint8_t char_bitmap_005[] = {0x06, 0x49, 0x49, 0x30};          // 7-Segment 5
+const PROGMEM uint8_t char_bitmap_006[] = {0x36, 0x49, 0x49, 0x30, 0x40};    // 7-Segment 6
+const PROGMEM uint8_t char_bitmap_007[] = {0x01, 0x01, 0x036};               // 7-Segment 7
+const PROGMEM uint8_t char_bitmap_008[] = {0x36, 0x49, 0x49, 0x36};          // 7-Segment 8
+const PROGMEM uint8_t char_bitmap_009[] = {0x06, 0x49, 0x49, 0x36, 0x40};    // 7-Segment 9
+const PROGMEM uint8_t char_bitmap_010[] = {0x36, 0x09, 0x09, 0x36};          // 7-Segment A
+const PROGMEM uint8_t char_bitmap_011[] = {0x36, 0x48, 0x48, 0x30};          // 7-Segment B
+const PROGMEM uint8_t char_bitmap_012[] = {0x36, 0x41, 0x41};                // 7-Segment C
+const PROGMEM uint8_t char_bitmap_013[] = {0x30, 0x48, 0x48, 0x36};          // 7-Segment D
+const PROGMEM uint8_t char_bitmap_014[] = {0x36, 0x49, 0x49};                // 7-Segment E
+const PROGMEM uint8_t char_bitmap_015[] = {0x36, 0x09, 0x09};                // 7-Segment F
 const PROGMEM uint8_t char_bitmap_016[] = {0x00, 0x00, 0x00, 0x00, 0x00};   
 const PROGMEM uint8_t char_bitmap_017[] = {0x00, 0x00, 0x00, 0x00, 0x00};   
 const PROGMEM uint8_t char_bitmap_018[] = {0x00, 0x00, 0x00, 0x00, 0x00};   
@@ -276,8 +276,8 @@ const PROGMEM uint8_t char_width_array[] = {
 
 //  0 bis 127
 //  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-    4, 4, 4, 4, 4, 4, 5, 4, 4, 5,   // 0
-    4, 4, 4, 4, 3, 3, 5, 5, 5, 5,   // 1
+    4, 1, 4, 3, 4, 4, 5, 3, 4, 5,   // 0
+    4, 4, 3, 4, 3, 3, 5, 5, 5, 5,   // 1
     5, 5, 5, 5, 5, 5, 5, 5, 5, 5,   // 2
     5, 5, 5, 1, 3, 5, 5, 5, 5, 2,   // 3
     3, 3, 5, 5, 2, 5, 2, 5, 5, 3,   // 4
