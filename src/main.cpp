@@ -81,13 +81,7 @@ void loop()
 {
     // put your main code here, to run repeatedly:
 
-    // Symbol über Matrix schieben
-    for (uint8_t i = 0; i < 26*6; ++i)
-    {
-        show_string(sub_mat_time, "abcdefghijklmnopqrstuvwxyz", CRGB(0, 0, 255), i, false);
-        FastLED.show();
-        delay(1000);
-    }
 
+        
     delay(500);
 }
