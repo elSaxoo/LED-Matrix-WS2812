@@ -405,6 +405,17 @@ void print_string(LEDMatrix &mat, const char *const text, const CHSV color, cons
     print_string(mat, text, CRGB(color), CRGB(background), space_between_characters);
 }
 
+
+// Lauftext
+void print_rolling_String(LEDMatrix &mat, const String text, const uint16_t delay_between_frames_ms, 
+    const CRGB color, const CRGB background, const UINT_8 space_between_characters, 
+    const Direction direction, const UINT_8 edge_offset)
+{
+
+}
+
+
+
 // Die Matrix über die serielle Schnittstelle mit Daten versorgen
 void serial_matrix_updater(HardwareSerial &UART, LEDMatrix &mat)
 {
