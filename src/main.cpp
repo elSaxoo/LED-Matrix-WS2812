@@ -3,7 +3,6 @@
 #include <LEDMatrix.h>
 #include <applications.h>
 #include <FontBitmap.h>
-#include <Wire.h>
 
 #include <debugging.h>
 #define DEBUGGING true
@@ -26,7 +25,13 @@ void setup()
     FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
     base_mat.all_off();
 
-    Wire.begin();
+    // begin I2C
+    Serial.begin();
+    
+    // set time sync provider
+    setSyncProvider(LEDArrangement::get_time);
+    setSyncInterval(3600);
+
 
     Serial.begin(115200);
     delay(100);

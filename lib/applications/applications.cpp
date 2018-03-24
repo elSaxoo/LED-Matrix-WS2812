@@ -2,7 +2,6 @@
 
 #include <FontBitmap.h>
 #include <TimeLib.h>
-#include <Wire.h>
 
 #include <debugging.h>
 #define DEBUGGING false
@@ -12,17 +11,17 @@
 namespace LEDArrangement
 {
 
-time_t get_time_i2c(){
-    Wire.requestFrom(8, 4);
-    while(Wire.available() < 4);
+time_t get_time(){
+    Serial.write(0xFF);
+    while(Serial.available() < 4);
     
     time_t time_now = 0;
     for(uint8_t i = 0; i < 4; ++i){
-        time_now = (time_now<<8) | Wire.read();
+        time_now = (time_now<<8) | Serial.read();
     }
     
-    while(Wire.available()){
-       Wire.read(); 
+    while(Serial.available()){
+       Serial.read(); 
     }
 
     return time_now;
