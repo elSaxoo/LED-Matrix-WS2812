@@ -1,6 +1,8 @@
 #include "applications.h"
 
 #include <FontBitmap.h>
+#include <TimeLib.h>
+#include <Wire.h>
 
 #include <debugging.h>
 #define DEBUGGING false
@@ -9,6 +11,22 @@
 
 namespace LEDArrangement
 {
+
+time_t get_time_i2c(){
+    Wire.requestFrom(8, 4);
+    while(Wire.available() < 4);
+    
+    time_t time_now = 0;
+    for(uint8_t i = 0; i < 4; ++i){
+        time_now = (time_now<<8) | Wire.read();
+    }
+    
+    while(Wire.available()){
+       Wire.read(); 
+    }
+
+    return time_now;
+}
 
 void print_char(LEDMatrix &mat, const Font::CharBitmap &character_bitmap, const CRGB color, const CRGB background)
 {

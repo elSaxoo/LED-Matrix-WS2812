@@ -3,6 +3,7 @@
 #include <LEDMatrix.h>
 #include <applications.h>
 #include <FontBitmap.h>
+#include <Wire.h>
 
 #include <debugging.h>
 #define DEBUGGING true
@@ -24,6 +25,8 @@ void setup()
     FastLED.setBrightness(8);
     FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
     base_mat.all_off();
+
+    Wire.begin();
 
     Serial.begin(115200);
     delay(100);

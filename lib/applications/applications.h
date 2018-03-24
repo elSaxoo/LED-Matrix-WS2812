@@ -3,9 +3,14 @@
 
 #include <Arduino.h>
 #include <LEDMatrix.h>
+#include <TimeLib.h>
 
 namespace LEDArrangement
 {
+
+// check time via i2c
+time_t get_time();
+
 
 void print_char(LEDMatrix &mat, const char character, const CRGB color = CRGB(255, 0, 0), const CRGB background = CRGB(0, 0, 0));
 
