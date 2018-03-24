@@ -1,6 +1,7 @@
 #include "applications.h"
 
 #include <FontBitmap.h>
+#include <TimeLib.h>
 
 #include <debugging.h>
 #define DEBUGGING false
@@ -9,6 +10,22 @@
 
 namespace LEDArrangement
 {
+
+time_t get_time(){
+    Serial.write(0xFF);
+    while(Serial.available() < 4);
+    
+    time_t time_now = 0;
+    for(uint8_t i = 0; i < 4; ++i){
+        time_now = (time_now<<8) | Serial.read();
+    }
+    
+    while(Serial.available()){
+       Serial.read(); 
+    }
+
+    return time_now;
+}
 
 void print_char(LEDMatrix &mat, const Font::CharBitmap &character_bitmap, const CRGB color, const CRGB background)
 {
