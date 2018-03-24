@@ -55,7 +55,7 @@ void print_char(LEDMatrix &mat, const Font::CharBitmap &character_bitmap, const 
         }
 
         // Für jede Zeile der Spalte
-        for (UINT_8 i = 0; i < char_height; ++i)
+        for (UINT_8 i = 0; i < character_bitmap.height(); ++i)
         {
 
             // Debug Ausgaben
@@ -169,13 +169,6 @@ void print_string(LEDMatrix &mat, const char *const text, const CHSV color, cons
 }
 
 
-// Lauftext
-void print_rolling_String(LEDMatrix &mat, const String text, const uint16_t delay_between_frames_ms, 
-    const CRGB color, const CRGB background, const UINT_8 space_between_characters, 
-    const Direction direction, const UINT_8 edge_offset)
-{
-
-}
 
 
 
