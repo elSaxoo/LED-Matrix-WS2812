@@ -26,6 +26,9 @@ public:
     // Zuweisungsoperator
     void operator=(const ColumnBitmap& Column_Bitmap);
 
+    // Höhe des Zeichens in Pixel
+    const uint8_t length() const {return 8;}
+
     // Prüfen ob Bit gesetzt ist
     const bool get_row_bit(const uint8_t row_index) const;
 

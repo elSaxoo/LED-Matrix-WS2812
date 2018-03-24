@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include <LEDMatrix.h>
-#include <applications.h>
 #include <FontBitmap.h>
+#include <applications.h>
+#include <Effects.h>
 
 #include <debugging.h>
 #define DEBUGGING false
@@ -16,6 +17,8 @@ CRGBArray<NUM_LEDS> leds;
 LEDArrangement::LEDMatrix base_mat(leds, 10, 30, LEDArrangement::Wiring_Start_Point::TOP_RIGHT, LEDArrangement::Strip_Orientation::ZIGZAG_HORIZONTAL);
 
 LEDArrangement::LEDMatrix sub_mat_time(base_mat, 8, 30, 1, 0);
+
+LEDArrangement::Effects::RollingText roll(sub_mat_time, 5000/30, String("Hallo"));
 
 void setup()
 {
