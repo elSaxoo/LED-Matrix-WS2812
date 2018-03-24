@@ -25,8 +25,6 @@ void setup()
     FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
     base_mat.all_off();
 
-    // begin I2C
-    Serial.begin();
     
     // set time sync provider
     setSyncProvider(LEDArrangement::get_time);
