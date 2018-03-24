@@ -1,8 +1,13 @@
 import serial
-import datetime
+import time
 
-serialport = serial.Serial("/dev/ttyAMAO", 115200, timeout=0.5)
+serialport = serial.Serial("/dev/ttyAMAO", 115200)
 
 while True:
-    command = serialport.read()
-    print (str(command))
+    data = serialport.read_until()
+    if data == 0xFF:
+        t = time.time()
+        print(t)
+        serialport.write(t)
+
+    print (str(data))

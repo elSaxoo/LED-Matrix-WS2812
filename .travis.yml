@@ -37,6 +37,7 @@ install:
     - pip install -U platformio
     - platformio update
     - platformio lib install "FastLED"
+    - platfomrio lib install "TimeLib"
 
 script:
     - platformio run

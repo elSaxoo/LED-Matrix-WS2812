@@ -5,7 +5,7 @@
 #include <FontBitmap.h>
 
 #include <debugging.h>
-#define DEBUGGING true
+#define DEBUGGING false
 #define ASSERT_CHECK true
 
 #define NUM_LEDS 300
@@ -28,7 +28,7 @@ void setup()
     
     // set time sync provider
     setSyncProvider(LEDArrangement::get_time);
-    setSyncInterval(3600);
+    setSyncInterval(10);
 
 
     Serial.begin(115200);

@@ -13,6 +13,7 @@ namespace LEDArrangement
 
 time_t get_time(){
     Serial.write(0xFF);
+    Serial.write('\n');
     while(Serial.available() < 4);
     
     time_t time_now = 0;
