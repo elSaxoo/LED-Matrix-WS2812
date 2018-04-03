@@ -3,7 +3,7 @@
 #include <LEDMatrix.h>
 #include <FontBitmap.h>
 #include <applications.h>
-#include <Effects.h>
+#include <RollingText.h>
 
 #include <debugging.h>
 #define DEBUGGING false
@@ -18,12 +18,13 @@ LEDArrangement::LEDMatrix base_mat(leds, 10, 30, LEDArrangement::Wiring_Start_Po
 
 LEDArrangement::LEDMatrix sub_mat_time(base_mat, 8, 30, 1, 0);
 
-LEDArrangement::Effects::RollingText roll(sub_mat_time, 5000/30, String("Hallo"));
+LEDArrangement::Effects::RollingText roll_effect(sub_mat_time, 5000/30, String("Hallo"),
+                                CRGB(0, 255, 0), CRGB(0, 0, 0), 1,
+                                LEDArrangement::Direction::LEFT, 30);
 
 void setup()
 {
     // put your setup code here, to run once:
-
     FastLED.setBrightness(8);
     FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
     base_mat.all_off();
@@ -44,42 +45,8 @@ void setup()
     delay(1000);
 
 
-    // Symbol in Mitte der Matrix schieben
-    // sub_mat_time.shift(LEDArrangement::Direction::RIGHT, 15-3) ;
-    // FastLED.show();
-    // delay(200);
-
-    if(DEBUGGING)
-    {
-        // [][][]-Operator Test
-        // Zugriff über [][][]-Operator ist ineffizient
-        // aber einfach
-        // siehe "FontBitmap.h" für effizienteren Weg
-        for(char test_char = 0; test_char < 127; ++test_char){
-            Serial.println(String("Test char = '") + test_char + String("'"));
-            for(int i = 0; i < LEDArrangement::Font::font_bitmap[test_char].height(); ++i) {
-                for(int j = 0; j < LEDArrangement::Font::font_bitmap[test_char].width(); ++j) {
-                    if(LEDArrangement::Font::font_bitmap[test_char][j][i]) {
-                        Serial.print("*");
-                    }
-                    else {
-                        Serial.print(" ");
-                    }
-                }
-                Serial.println();
-            }
-        }
-
-        DEBUG("Font Test");
-        // Testen, ob Font-Konstanten richtig aus PROGMEM-Speicher gelesen werden
-        // Ausgabe der Konstanten auf dem Serial Moitor
-        LEDArrangement::Font::test_PROGMEM_access();
-    }
-
-    // Überarbeite print-Funktion testen
-    // Achte mal darauf, ob schmalere Buchstaben nun auch weniger Platz einnehmen
-    LEDArrangement::print_string(sub_mat_time, "1.Kai!!");
-    delay(60000);
+    // Matrix für Effekt initialisieren
+    roll_effect.setup_LED_Matrix();
 
 
     if (DEBUGGING)
@@ -90,6 +57,21 @@ void loop()
 {
     // put your main code here, to run repeatedly:
 
+    bool new_frame_available = false;
+
+    // Die aktuelle Zeit in Millisekunden an Effect-Objekt übergeben
+    // Objekt prüft selber, ob seit dem letzten Frame genug Zeit vergangen ist
+    // Wenn ja wird neues Frame berechent und true zurückgegeben.
+    // Wenn nicht wird nur false zurückgegeben.
+    new_frame_available = roll_effect.update_frame(millis());
+
+
+    // Wenn ein neues Frame berechnet wurde 
+    if(new_frame_available)
+    {
+        // an Matrix übertragen
+        FastLED.show();
+    }
 
         
     delay(500);
