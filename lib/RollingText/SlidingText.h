@@ -1,5 +1,5 @@
-#ifndef ROLLINGTEXT_H
-#define ROLLINGTEXT_H
+#ifndef SLIDINGTEXT_H
+#define SLIDINGTEXT_H
 
 #include <Arduino.h>
 #include <LEDMatrix.h>
@@ -13,11 +13,11 @@ namespace Effects
 
 
 
-// ---------------- RollingText ----------------
-class RollingText : public LED_effect
+// ---------------- SlidingText ----------------
+class SlidingText : public LED_effect
 {
     public:
-        RollingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
+        SlidingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
                     const CRGB Color = CRGB(0, 255, 0), const CRGB Background = CRGB(0, 0, 0), const UINT_8 Space_between_characters = 1, 
                     const LEDArrangement::Direction direction = LEDArrangement::Direction::LEFT, const UINT_8 Edge_offset = 0);
 
@@ -33,6 +33,8 @@ class RollingText : public LED_effect
     private:
 
         bool update_index_parameter_and_bitmaps();
+
+        bool reset_index_parameter_and_bitmaps();
 
         void write_bitmap_in_matrix_column(const LEDArrangement::Font::ColumnBitmap& bitmap, const UINT_8 column_index);
 
@@ -65,4 +67,4 @@ class RollingText : public LED_effect
 
 } // Ende namespace LEDArrangement
 
-#endif // ROLLINGTEXT_H
+#endif // SLIDINGTEXT_H

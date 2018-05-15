@@ -1,4 +1,4 @@
-#include <RollingText.h>
+#include <SlidingText.h>
 
 
 namespace LEDArrangement
@@ -8,9 +8,9 @@ namespace Effects
 {
 
 
-// ---------------- RollingText ----------------
+// ---------------- SlidingText ----------------
 
-RollingText::RollingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
+SlidingText::SlidingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
         const CRGB Color, const CRGB Background, const UINT_8 Space_between_characters, 
         const LEDArrangement::Direction direction, const UINT_8 Edge_offset)
 :
@@ -43,7 +43,7 @@ roll_out(false)
 
 }
 
-bool RollingText::setup_LED_Matrix()
+bool SlidingText::setup_LED_Matrix()
 {
     switch(direction)
     {
@@ -125,7 +125,7 @@ bool RollingText::setup_LED_Matrix()
     return true;
 }
 
-bool RollingText::render_next_frame()
+bool SlidingText::render_next_frame()
 {
     // Falls der ganze Text auf die Matrix passt
     if(this->only_cycle)
@@ -150,7 +150,7 @@ bool RollingText::render_next_frame()
 
 
 
-bool RollingText::update_frame(const uint32_t currentTime)
+bool SlidingText::update_frame(const uint32_t currentTime)
 {
     if (effect_update_timer(currentTime))
     {
@@ -164,20 +164,20 @@ bool RollingText::update_frame(const uint32_t currentTime)
 
 
 
-const Direction RollingText::change_direction(const Direction new_dir)
+const Direction SlidingText::change_direction(const Direction new_dir)
 {
     this->direction = new_dir;
     this->update_index_parameter_and_bitmaps();
 
     return this->direction;
 }
-const Direction RollingText::change_direction()
+const Direction SlidingText::change_direction()
 {
     return this->change_direction((this->direction == Direction::LEFT ? Direction::RIGHT : Direction::LEFT));   
 }
 
 
-bool RollingText::update_index_parameter_and_bitmaps()
+bool SlidingText::update_index_parameter_and_bitmaps()
 {
     // könnte nutzlich sein
     bool loopback = false; 
@@ -296,7 +296,7 @@ bool RollingText::update_index_parameter_and_bitmaps()
 
 
 
-void RollingText::write_bitmap_in_matrix_column(const LEDArrangement::Font::ColumnBitmap& bitmap, const UINT_8 column_index)
+void SlidingText::write_bitmap_in_matrix_column(const LEDArrangement::Font::ColumnBitmap& bitmap, const UINT_8 column_index)
 {
     // Für jede Zeile des Spalten-Vektors
     for(uint8_t i = 0; i < bitmap.length(); ++i)
