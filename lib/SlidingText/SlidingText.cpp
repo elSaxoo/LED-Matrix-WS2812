@@ -12,7 +12,7 @@ namespace Effects
 
 SlidingText::SlidingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
         const CRGB Color, const CRGB Background, const UINT_8 Space_between_characters, 
-        const LEDArrangement::Direction direction, const UINT_8 Edge_offset)
+        const LEDArrangement::Direction direction, const UINT_8 Edge_offset, const int32_t Repeat_at)
 :
 LED_effect(Mat, Delay_between_frames),
 text(Text),
@@ -21,6 +21,7 @@ background(Background),
 space_between_characters(Space_between_characters), 
 direction(direction), 
 edge_offset(Edge_offset),
+repeat_at(Repeat_at),
 //
 space_counter(0),
 String_char_index(0),
@@ -34,6 +35,11 @@ only_cycle(false),
 roll_out(false)
 {
     edge_offset = (edge_offset < mat.matrix_width()) ? edge_offset : mat.matrix_width();
+
+    if (Repeat_at < 0)
+    {
+        repeat_at = Repeat_at + negative_base_offsett + mat.matrix_width();
+    }
 
     String_char_index = (direction == LEDArrangement::Direction::LEFT) ? 0 : text.length() - 1;
     temp_char_bitmap = LEDArrangement::Font::font_bitmap[text.charAt(String_char_index)];
@@ -149,7 +155,6 @@ bool SlidingText::render_next_frame()
 }
 
 
-
 bool SlidingText::update_frame(const uint32_t currentTime)
 {
     if (effect_update_timer(currentTime))
@@ -161,7 +166,6 @@ bool SlidingText::update_frame(const uint32_t currentTime)
         return false;
     }
 }
-
 
 
 const Direction SlidingText::change_direction(const Direction new_dir)
@@ -294,6 +298,48 @@ bool SlidingText::update_index_parameter_and_bitmaps()
     return loopback;     
 }
 
+bool reset_index_parameter_and_bitmaps()
+{
+    this->slide_counter = 0;
+
+    switch(this->direction)
+    {
+        case Direction::RIGHT:
+            
+            // Space Counter zurücksetzen 
+            this->space_counter = 0;
+            
+            // Index für Zeichen zurücksetzen
+            this->String_char_index = this->text.lenght() - 1;
+            // Bitmap von neuem Zeichen laden
+            this->temp_char_bitmap =  LEDArrangement::Font::font_bitmap[text.charAt(this->String_char_index)];
+
+            // Index für Column-Bitmap zurücksetzen 
+            this->Bitmap_column_index = this->temp_char_bitmap.width() - 1;
+            // Neue Bitmap laden
+            this->temp_column_bitmap = temp_char_bitmap[this->Bitmap_column_index];
+            
+            break;
+
+        case Direction::LEFT:
+        default:
+
+            // Space Counter zurücksetzen 
+            this->space_counter = 0;
+
+            // Index für Zeichen zurücksetzen
+            this->String_char_index = 0;
+            // Bitmap von neuem Zeichen laden
+            this->temp_char_bitmap =  LEDArrangement::Font::font_bitmap[text.charAt(this->String_char_index)];
+
+            // Index für Column-Bitmap zurücksetzen 
+            this->Bitmap_column_index = 0;
+            // Neue Bitmap laden
+            this->temp_column_bitmap = temp_char_bitmap[this->Bitmap_column_index];
+            
+            break;
+    }
+}
 
 
 void SlidingText::write_bitmap_in_matrix_column(const LEDArrangement::Font::ColumnBitmap& bitmap, const UINT_8 column_index)
