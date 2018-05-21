@@ -25,7 +25,7 @@ class LED_effect // Oberklasse für Effekte
 
         // Matrix für Effect vorbereiten
         // z.B. Pixel initialieren
-		virtual bool setup_LED_Matrix() = 0;
+		virtual bool setup() = 0;
 
         // nächstes Bild berechnen und in Pixel-Array speichern
         // aber noch nicht an Matrix übertragen
@@ -36,6 +36,9 @@ class LED_effect // Oberklasse für Effekte
         // Falls ja, wird das neue Frame berechent und true zurückgegeben
         // Falls nein, wird direkt false zurückgegeben. 
 		virtual bool update_frame(const uint32_t currentTime = 0);
+
+        // Virtueller Destruktor
+        //virtual ~LED_effect() {}
 
 	protected:
 
