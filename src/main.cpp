@@ -3,10 +3,10 @@
 #include <LEDMatrix.h>
 #include <FontBitmap.h>
 #include <applications.h>
-#include <RollingText.h>
+#include <SlidingText.h>
 
 #include <debugging.h>
-#define DEBUGGING false
+#define DEBUGGING true
 #define ASSERT_CHECK true
 
 #define NUM_LEDS 300
@@ -18,9 +18,10 @@ LEDArrangement::LEDMatrix base_mat(leds, 10, 30, LEDArrangement::Wiring_Start_Po
 
 LEDArrangement::LEDMatrix sub_mat_time(base_mat, 8, 30, 1, 0);
 
-LEDArrangement::Effects::RollingText roll_effect(sub_mat_time, 5000/30, String("Hallo"),
+LEDArrangement::Effects::SlidingText roll_effect(sub_mat_time, 2400/30, String("Kai ist cool"),
                                 CRGB(0, 255, 0), CRGB(0, 0, 0), 1,
-                                LEDArrangement::Direction::LEFT, 30);
+                                LEDArrangement::Direction::LEFT, 15, 
+                                LEDArrangement::Effects::SlidingText::TextEnd + sub_mat_time.matrix_width() + LEDArrangement::Effects::SlidingText::AutoRepeat);
 
 void setup()
 {
@@ -29,10 +30,10 @@ void setup()
     FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
     base_mat.all_off();
 
-    
+
     // set time sync provider
-    setSyncProvider(LEDArrangement::get_time);
-    setSyncInterval(10);
+    // setSyncProvider(LEDArrangement::get_time);
+    // setSyncInterval(10);
 
 
     Serial.begin(115200);
@@ -46,8 +47,10 @@ void setup()
 
 
     // Matrix für Effekt initialisieren
-    roll_effect.setup_LED_Matrix();
-
+    roll_effect.setup();
+    // an Matrix übertragen
+    FastLED.show();
+    delay(2000);
 
     if (DEBUGGING)
         DEBUG("...Setup complete");
@@ -72,7 +75,4 @@ void loop()
         // an Matrix übertragen
         FastLED.show();
     }
-
-        
-    delay(500);
 }

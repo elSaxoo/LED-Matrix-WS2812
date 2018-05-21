@@ -17,17 +17,19 @@ namespace Effects
 class SlidingText : public LED_effect
 {
     private:
-        static const uint32_t negative_base_offsett = 0x80000000; // Wert wichtig nicht ändern
+        static const uint32_t auto_repeat_offsett = ((uint32_t)1 << 31); // Wert wichtig nicht ändern
+        static const uint32_t text_end_offsett = ((uint32_t)1 << 30); // Wert wichtig nicht ändern
     
     public:
 
-        static const uint32_t TextEnd = negative_base_offsett;
+        static const uint32_t AutoRepeat = auto_repeat_offsett;
+        static const uint32_t TextEnd = text_end_offsett;
 
         SlidingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
                     const CRGB Color = CRGB(0, 255, 0), const CRGB Background = CRGB(0, 0, 0), const UINT_8 Space_between_characters = 1, 
-                    const LEDArrangement::Direction direction = LEDArrangement::Direction::LEFT, const UINT_8 Edge_offset = 0, const int32_t Repeat_at = TextEnd);
+                    const LEDArrangement::Direction direction = LEDArrangement::Direction::LEFT, const UINT_8 Edge_offset = 0, const uint32_t Slide_to = TextEnd);
 
-        bool setup_LED_Matrix();
+        bool setup();
 
 		bool render_next_frame();
 
@@ -51,7 +53,7 @@ class SlidingText : public LED_effect
         UINT_8 space_between_characters;
         LEDArrangement::Direction direction;
         UINT_8 edge_offset;
-        uint32_t repeat_at;
+        uint32_t slide_to;
 
         // Index-Parameter
         int16_t space_counter;
@@ -64,8 +66,8 @@ class SlidingText : public LED_effect
         bool is_matrix_big_enough_for_text;
         bool is_hole_text_on_matrix;
         bool only_cycle;
-        bool roll_out;
-        bool only_slide;
+        bool slide_out;
+        bool auto_repeat;
         uint32_t slide_counter;
     
 

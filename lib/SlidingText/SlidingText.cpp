@@ -12,7 +12,7 @@ namespace Effects
 
 SlidingText::SlidingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
         const CRGB Color, const CRGB Background, const UINT_8 Space_between_characters, 
-        const LEDArrangement::Direction direction, const UINT_8 Edge_offset, const int32_t Repeat_at)
+        const LEDArrangement::Direction direction, const UINT_8 Edge_offset, const uint32_t Slide_to)
 :
 LED_effect(Mat, Delay_between_frames),
 text(Text),
@@ -21,24 +21,34 @@ background(Background),
 space_between_characters(Space_between_characters), 
 direction(direction), 
 edge_offset(Edge_offset),
-repeat_at(Repeat_at),
+slide_to(Slide_to),
 //
 space_counter(0),
 String_char_index(0),
 Bitmap_column_index(0),
-temp_char_bitmap(LEDArrangement::Font::font_bitmap['K']),
+temp_char_bitmap(LEDArrangement::Font::FontBitmap::of('K')),
 temp_column_bitmap(0),
 //
 is_matrix_big_enough_for_text(false),
 is_hole_text_on_matrix(false),
 only_cycle(false),
-roll_out(false)
+slide_out(false),
+auto_repeat(false),
+slide_counter(0)
 {
     edge_offset = (edge_offset < mat.matrix_width()) ? edge_offset : mat.matrix_width();
 
-    if (Repeat_at < 0)
+    // Wenn der Text automatisch wiederholt werden soll
+    if(this->auto_repeat_offsett & slide_to)
     {
-        repeat_at = Repeat_at + negative_base_offsett + mat.matrix_width();
+        slide_to &= ~(this->auto_repeat_offsett);
+        this->auto_repeat = true;
+    }
+    // Wenn automatisch das Ende des Text ausgewält werden soll
+    if(this->text_end_offsett & slide_to)
+    {
+        slide_to &= ~(this->text_end_offsett);
+        slide_to += LEDArrangement::Font::FontBitmap::length_of(this->text, this->space_between_characters);
     }
 
     String_char_index = (direction == LEDArrangement::Direction::LEFT) ? 0 : text.length() - 1;
@@ -49,109 +59,74 @@ roll_out(false)
 
 }
 
-bool SlidingText::setup_LED_Matrix()
+bool SlidingText::setup()
 {
-    switch(direction)
+    // Matrix mit Hintergrundfarbe einfärben 
+    this->mat.color_all(this->background);
+
+    // interne Parameter zurücksetzen
+    this->reset_index_parameter_and_bitmaps();
+
+    // Die ersten x Frames berechnen
+    for(UINT_8 i = 0; i < this->edge_offset; ++i)
     {
-        case Direction::RIGHT:
+        this->render_next_frame();
+    }
 
-            for(UINT_8 i = 0; i < mat.matrix_width(); ++i)
-                {
-                    // Alles vorher ist Hintergrund
-                    if(i < mat.matrix_width() - this->edge_offset)
-                    {
-                        // Pixel auf Hintergrungfarbe setzen mithilfe von leerer Bitmap
-                        this->write_bitmap_in_matrix_column(LEDArrangement::Font::ColumnBitmap(0),  mat.matrix_width() - 1 - i);
-                    }
-                    //
-                    // Ab hier kommt Text
-                    else if(i >= mat.matrix_width() - this->edge_offset && !(this->is_hole_text_on_matrix))
-                    {
-                        // Buchstaben Spalte für Spalte in Matrix schreiben
-                        this->write_bitmap_in_matrix_column(this->temp_column_bitmap, mat.matrix_width() - 1 - i);
-
-                        // Falls das Ende des Text erreicht wird, gibt die Funktion true zurück
-                        this->is_hole_text_on_matrix = this->update_index_parameter_and_bitmaps();
-
-                        // Falls der ganze Text auf die Matrix passt
-                        if(this->is_hole_text_on_matrix)
-                        {
-                            only_cycle = true; // Für Später in render_next_frame Methode
-                        }
-                    }
-                    //
-                    // Alles nachher ist Hintergrung
-                    else if(this->is_hole_text_on_matrix && i >= mat.matrix_width() - this->edge_offset)
-                    {
-                        // Pixel auf Hintergrungfarbe setzen mithilfe von leerer Bitmap
-                        this->write_bitmap_in_matrix_column(LEDArrangement::Font::ColumnBitmap(0), mat.matrix_width() - 1 - i);
-                    }
-                }
-            
-            break;
-        case Direction::LEFT:
-        default:
-
-            for(UINT_8 i = 0; i < mat.matrix_width(); ++i)
-            {
-                // Alles vorher ist Hintergrund
-                if(i < mat.matrix_width() - this->edge_offset)
-                {
-                    // Pixel auf Hintergrungfarbe setzen mithilfe von leerer Bitmap
-                    this->write_bitmap_in_matrix_column(LEDArrangement::Font::ColumnBitmap(0), i);
-                }
-                //
-                // Ab hier kommt Text
-                else if(i >= mat.matrix_width() - this->edge_offset && !(this->is_hole_text_on_matrix))
-                {
-                    // Buchstaben Spalte für Spalte in Matrix schreiben
-                    this->write_bitmap_in_matrix_column(this->temp_column_bitmap, i);
-
-                    // Falls das Ende des Text erreicht wird, gibt die Funktion true zurück
-                    this->is_hole_text_on_matrix = this->update_index_parameter_and_bitmaps();
-
-                    // Falls der ganze Text auf die Matrix passt
-                    if(this->is_hole_text_on_matrix)
-                    {
-                        only_cycle = true; // Für Später in render_next_frame Methode
-                    }
-                }
-                //
-                // Alles nachher ist Hintergrung
-                else if(this->is_hole_text_on_matrix && i >= mat.matrix_width() - this->edge_offset)
-                {
-                    // Pixel auf Hintergrungfarbe setzen mithilfe von leerer Bitmap
-                    this->write_bitmap_in_matrix_column(LEDArrangement::Font::ColumnBitmap(0), i);
-                }
-            }
-
-            break;
-        }
-
-    return true;
+   return true;
 }
 
 bool SlidingText::render_next_frame()
 {
-    // Falls der ganze Text auf die Matrix passt
+    // Nur Rotieren lassen
     if(this->only_cycle)
     {
         // Nur Rotieren lassen
         mat.cycle(this->direction, 1);
+        return true;
     }
     else
     {
-        // Text spaltenweise über Matrix schieben
-        mat.shift(this->direction, 1);
+        if (this->slide_counter >= this->slide_to)
+        {
+            // Wenn der Text automatisch wiederholt werden soll
+            if (this->auto_repeat == true)
+            {
+                this->reset_index_parameter_and_bitmaps();
+            }
+        }
 
-        // Neue Spalten-Bitmap in Matrix schreiben
-        this->write_bitmap_in_matrix_column(this->temp_column_bitmap, ((this->direction == Direction::LEFT) ? mat.matrix_width() - 1 : 0));
-        
-        // Die nächste Spalten-Bitmap laden
-        this->update_index_parameter_and_bitmaps();
-    }
-    
-    return true;
+        if (this->slide_counter < this->slide_to)
+        {
+            // Text spaltenweise über Matrix schieben
+            mat.shift(this->direction, 1);
+
+            if (this->slide_out == false)
+            {
+                // Neue Spalten-Bitmap in Matrix schreiben
+                this->write_bitmap_in_matrix_column(this->temp_column_bitmap, ((this->direction == Direction::LEFT) ? mat.matrix_width() - 1 : 0));
+                
+                // Die nächste Spalten-Bitmap laden
+                this->slide_out = this->update_index_parameter_and_bitmaps();
+            }
+            else
+            {
+                // Leere Spalten-Bitmap in Matrix schreiben
+                this->write_bitmap_in_matrix_column(LEDArrangement::Font::ColumnBitmap(0), ((this->direction == Direction::LEFT) ? mat.matrix_width() - 1 : 0));
+            }
+
+            // Zähler erhöhen
+            this->slide_counter += 1;
+
+            // Matrix hat sich geändert
+            return true;
+        }
+        else
+        {
+            // Matrix hat sich nicht geändert
+            return false;
+        }
+    }   
 }
 
 
@@ -298,9 +273,10 @@ bool SlidingText::update_index_parameter_and_bitmaps()
     return loopback;     
 }
 
-bool reset_index_parameter_and_bitmaps()
+bool SlidingText::reset_index_parameter_and_bitmaps()
 {
     this->slide_counter = 0;
+    this->slide_out = false;
 
     switch(this->direction)
     {
@@ -310,7 +286,7 @@ bool reset_index_parameter_and_bitmaps()
             this->space_counter = 0;
             
             // Index für Zeichen zurücksetzen
-            this->String_char_index = this->text.lenght() - 1;
+            this->String_char_index = this->text.length() - 1;
             // Bitmap von neuem Zeichen laden
             this->temp_char_bitmap =  LEDArrangement::Font::font_bitmap[text.charAt(this->String_char_index)];
 
@@ -339,6 +315,7 @@ bool reset_index_parameter_and_bitmaps()
             
             break;
     }
+    return true;
 }
 
 
