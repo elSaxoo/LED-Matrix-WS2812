@@ -636,8 +636,39 @@ const ColumnBitmap CharBitmap::get_column_bitmap(const uint8_t column_index) con
 
 // ------- FontBitmap -------
 
+// Konstruktor
+FontBitmap::FontBitmap(const String Text)
+:
+    text(Text)
+{}
+
+// Kopierkonstruktor
+FontBitmap::FontBitmap(const FontBitmap& other)
+:
+    text(other.text)
+{}
+
+// Zuweisungsoperator
+void FontBitmap::operator=(const FontBitmap& other)
+{
+    this->text = other.text;
+}
+
+// Länge eines Textes in Pixeln berechnen
+const uint32_t FontBitmap::length_of(const String text, const uint8_t space_between_characters)
+{
+    uint32_t length = 0;
+    for(uint32_t i = 0; i < text.length(); ++i)
+    {
+        length += FontBitmap::get_char_bitmap(text.charAt(i)).width();
+        length += (i < text.length() -1) ? space_between_characters : 0;
+    }
+    return length;
+}
+
+
 // char_bitmap aus PRGOMEM-Speicher holen
-const CharBitmap FontBitmap::get_char_bitmap(const char character_index) const
+const CharBitmap FontBitmap::get_char_bitmap(const char character_index)
 {
     return CharBitmap(
     (const uint8_t* const)  pgm_read_word(&font_bitmap_array[((const uint8_t)character_index) % 256]), // Zeiger sind 2 Byte groß

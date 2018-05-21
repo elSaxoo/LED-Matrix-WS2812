@@ -88,13 +88,42 @@ class FontBitmap
 
 public:
 
+    // Konstruktor
+    FontBitmap(const String Text = String(""));
+
+    // Kopierkonstruktor
+    FontBitmap(const FontBitmap& other);
+
+    // Zuweisungsoperator
+    void operator=(const FontBitmap& other);
+
     // uint8_t get_column_bitmap(char character_index, uint8_t column_index) const;
     // uint8_t get_char_width(char character_index) const;
 
-    // char_bitmap aus PRGOMEM-Speicher holen
-    const CharBitmap get_char_bitmap(const char character_index) const;
+    // Länge eines Textes in Pixeln berechnen
+    static const uint32_t length_of(const String text, const uint8_t space_between_characters = 1);
 
+    // char_bitmap aus PRGOMEM-Speicher holen
+    static const CharBitmap get_char_bitmap(const char character_index);
+
+    // char_bitmap aus PRGOMEM-Speicher holen
+    const CharBitmap get_char_bitmap_by_index(const uint32_t index) const { return get_char_bitmap(this->text.charAt(index));}
+
+    // char_bitmap aus PRGOMEM-Speicher holen
+    static const CharBitmap of(const char character_index) { return get_char_bitmap(character_index);}
+
+    // char_bitmap aus PRGOMEM-Speicher holen
+    static const FontBitmap of(const String text) { return FontBitmap(text);}
+
+    // Länge eines Textes in Pixeln berechnen
+    const uint32_t length(const uint8_t space_between_characters = 1) const { return length_of(this->text, space_between_characters);}
+
+    // []-Operator überladen
     const CharBitmap operator[](const char character_index) const {return get_char_bitmap(character_index);}
+    const CharBitmap operator[](const uint32_t index) const {return get_char_bitmap_by_index(index);}
+
+private:
+    String text;
 
 }; 
 
