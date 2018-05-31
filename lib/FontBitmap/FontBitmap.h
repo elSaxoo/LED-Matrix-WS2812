@@ -178,8 +178,83 @@ Besser ist, Werte zwischenzuspeichern
     }
 
 */
-        
 
+
+
+
+
+
+
+
+enum Emoji
+{
+
+    Smilie      = (char) 192,
+    Sad_Smilie  = (char) 193,
+    Heart       = (char) 194,
+    Y           = (char) 195,
+    X           = (char) 196,
+    Attention   = (char) 197,
+    Nr_06       = (char) 198,
+    Nr_07       = (char) 199,
+    Nr_08       = (char) 200,
+    Nr_09       = (char) 201,
+    Nr_10       = (char) 202,
+    Nr_11       = (char) 203,
+    Nr_12       = (char) 204,
+    Nr_13       = (char) 205,
+    Nr_14       = (char) 206,
+    Nr_15       = (char) 207,
+    Nr_16       = (char) 208,
+    Nr_17       = (char) 209,
+    Nr_18       = (char) 210,
+    Nr_19       = (char) 211,
+    Nr_20       = (char) 212,
+    Nr_21       = (char) 213,
+    Nr_22       = (char) 214,
+    Nr_23       = (char) 215,
+    Nr_24       = (char) 216,
+    Nr_25       = (char) 217,
+    Nr_26       = (char) 218,
+    Nr_27       = (char) 219,
+    Nr_28       = (char) 220,
+    Nr_29       = (char) 221,
+    Nr_30       = (char) 222,
+    Nr_31       = (char) 223,
+    Nr_32       = (char) 224,
+    Nr_33       = (char) 225,
+    Nr_34       = (char) 226,
+    Nr_35       = (char) 227,
+    Nr_36       = (char) 228,
+    Nr_37       = (char) 229,
+    Nr_38       = (char) 230,
+    Nr_39       = (char) 231,
+    Nr_40       = (char) 232,
+    Nr_41       = (char) 233,
+    Nr_42       = (char) 234,
+    Nr_43       = (char) 235,
+    Nr_44       = (char) 236,
+    Nr_45       = (char) 237,
+    Nr_46       = (char) 238,
+    Nr_47       = (char) 239,
+    Nr_48       = (char) 240,
+    Nr_49       = (char) 241,
+    Nr_50       = (char) 242,
+    Nr_51       = (char) 243,
+    Nr_52       = (char) 244,
+    Nr_53       = (char) 245,
+    Nr_54       = (char) 246,
+    Nr_55       = (char) 247,
+    Nr_56       = (char) 248,
+    Nr_57       = (char) 249,
+    Nr_58       = (char) 250,
+    Nr_59       = (char) 251,
+    Nr_60       = (char) 252,
+    Nr_61       = (char) 253,
+    Nr_62       = (char) 254,
+    Nr_63       = (char) 255
+
+}; // end enum Emoji
 
 
 // Zum Testen ob korrekt aus dem PROGMEM-Speicher gelesen wird                // 127 

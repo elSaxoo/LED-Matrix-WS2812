@@ -138,7 +138,7 @@ const PROGMEM uint8_t char_bitmap_125[] = {0x41, 0x36, 0x080};               // 
 const PROGMEM uint8_t char_bitmap_126[] = {0x0C, 0x02, 0x0C, 0x10, 0x0C};    // ~
 const PROGMEM uint8_t char_bitmap_127[] = {0x00, 0x00, 0x00, 0x00, 0x00};    // DEL
 
-// 128 bis 255
+// 128 bis 191 Sonderzeichen
 const PROGMEM uint8_t char_bitmap_128[] = {};
 const PROGMEM uint8_t char_bitmap_129[] = {};
 const PROGMEM uint8_t char_bitmap_130[] = {};
@@ -203,12 +203,14 @@ const PROGMEM uint8_t char_bitmap_188[] = {};
 const PROGMEM uint8_t char_bitmap_189[] = {};
 const PROGMEM uint8_t char_bitmap_190[] = {};
 const PROGMEM uint8_t char_bitmap_191[] = {};
-const PROGMEM uint8_t char_bitmap_192[] = {};
-const PROGMEM uint8_t char_bitmap_193[] = {};
-const PROGMEM uint8_t char_bitmap_194[] = {};
-const PROGMEM uint8_t char_bitmap_195[] = {};
-const PROGMEM uint8_t char_bitmap_196[] = {};
-const PROGMEM uint8_t char_bitmap_197[] = {};
+
+// 192 bis 255 Emoji
+const PROGMEM uint8_t char_bitmap_192[] = {0x26, 0x46, 0x58, 0x46, 0x26}; // Smilie
+const PROGMEM uint8_t char_bitmap_193[] = {0x46, 0x26, 0x38, 0x26, 0x46}; // Sad Smilie
+const PROGMEM uint8_t char_bitmap_194[] = {0x0C, 0x12, 0x24, 0x12,0x0C}; // Heart
+const PROGMEM uint8_t char_bitmap_195[] = {0x18, 0x30, 0x18, 0x0c, 0x06}; // y
+const PROGMEM uint8_t char_bitmap_196[] = {0x41, 0x36, 0x08, 0x36, 0x41}; // X
+const PROGMEM uint8_t char_bitmap_197[] = {0x03, 0x67, 0x6F, 0x67, 0x03}; // !
 const PROGMEM uint8_t char_bitmap_198[] = {};
 const PROGMEM uint8_t char_bitmap_199[] = {};
 const PROGMEM uint8_t char_bitmap_200[] = {};
@@ -290,7 +292,7 @@ const PROGMEM uint8_t char_width_array[] = {
     5, 5, 5, 5, 5, 5, 5, 5, 5, 5,   // 11
     5, 5, 5, 3, 1, 3, 5, 5,         // 12
 
-//  128 bis 255
+//  128 bis 191 Sonderzeichen
 //  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                             0, 0,   // 12   
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // 13
@@ -299,7 +301,11 @@ const PROGMEM uint8_t char_width_array[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // 16
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // 17
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // 18
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // 19
+    0, 0,                           // 19
+    
+//  192 bis 255 Emoji
+//  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+          5, 5, 5, 5, 5, 5, 0, 0,   // 19
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // 20
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // 21
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   // 22

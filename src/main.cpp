@@ -6,7 +6,7 @@
 #include <SlidingText.h>
 
 #include <debugging.h>
-#define DEBUGGING true
+#define DEBUGGING false
 #define ASSERT_CHECK true
 
 #define NUM_LEDS 300
@@ -20,8 +20,24 @@ LEDArrangement::LEDMatrix sub_mat_time(base_mat, 8, 30, 1, 0);
 
 LEDArrangement::Effects::SlidingText roll_effect(sub_mat_time, 2400/30, String("Kai ist cool"),
                                 CRGB(0, 255, 0), CRGB(0, 0, 0), 1,
-                                LEDArrangement::Direction::LEFT, 15, 
-                                LEDArrangement::Effects::SlidingText::TextEnd + sub_mat_time.matrix_width() + LEDArrangement::Effects::SlidingText::AutoRepeat);
+                                LEDArrangement::Direction::LEFT, 0, 
+                                LEDArrangement::Effects::SlidingText::TextEnd + sub_mat_time.matrix_width() + 20 + LEDArrangement::Effects::SlidingText::AutoRepeat);
+
+// Für Jessica, 
+// das 'J' steht für Jessica
+const char text[] = {'K', '+', 'J', '=', LEDArrangement::Font::Emoji::Heart};
+
+
+// Emoji Test
+const char emoji_text[] = {
+    LEDArrangement::Font::Emoji::Smilie,
+    LEDArrangement::Font::Emoji::Sad_Smilie,
+    LEDArrangement::Font::Emoji::Heart,
+    LEDArrangement::Font::Emoji::Y,
+    LEDArrangement::Font::Emoji::X,
+    LEDArrangement::Font::Emoji::Attention
+};
+
 
 void setup()
 {
@@ -36,14 +52,35 @@ void setup()
     // setSyncInterval(10);
 
 
-    Serial.begin(115200);
-    delay(100);
-
     if (DEBUGGING)
     {
+        // Serielle Verbindung zum 
+        Serial.begin(115200);
+        delay(100);
+
         DEBUG("Starting Setup...");
     }
     delay(1000);
+
+
+
+    // Text für Jessica
+    FastLED.setBrightness(64);
+    LEDArrangement::print_string(sub_mat_time, text, CRGB(0, 255, 0));
+    // FastLED.show(); in print-Befehl enthalten
+    delay(10000);
+    // Helligkeit zurücksetzen
+    FastLED.setBrightness(8);
+
+
+
+    // Emoji Test
+    FastLED.setBrightness(64);
+    LEDArrangement::print_string(sub_mat_time, emoji_text, CRGB(0, 255, 0), CRGB(0, 0, 0), 1);
+    // FastLED.show(); in print-Befehl enthalten
+    delay(10000);
+    FastLED.setBrightness(8);
+
 
 
     // Matrix für Effekt initialisieren
