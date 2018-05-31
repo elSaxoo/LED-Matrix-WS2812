@@ -8,6 +8,8 @@
 namespace LEDArrangement
 {
 
+
+
 // Konstruktor
 LEDMatrix::LEDMatrix(CRGBArray<STRIP_LENGTH> &leds, const UINT_16 Height, const UINT_16 Width, const Wiring_Start_Point Wiring_start_point, const Strip_Orientation Strip_orientation)
     : mat_type(MatrixType::BASE_MATRIX),

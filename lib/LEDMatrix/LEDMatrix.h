@@ -11,6 +11,37 @@
 namespace LEDArrangement
 {
 
+template<typename LED_Array>
+void led_strip_self_test(LED_Array& led_strip, const uint32_t length, const CRGB color = CRGB(255, 255, 255), const uint8_t brightness = 8, const uint32_t delay_ms = 100, const bool all_at_once = false)
+{
+    // Helligkeit anpassen
+    FastLED.setBrightness(brightness);
+
+    if(all_at_once)
+    {
+        for(uint32_t i = 0; i < length; ++i)
+        {
+            led_strip[i] = color;
+        }
+        FastLED.show();
+    }
+    else
+    {
+        for(uint32_t i = 0; i < length; ++i)
+        {
+            led_strip[i] = color;
+            FastLED.show();
+            delay(delay_ms);
+        }
+    }
+}
+
+// template<typedef T, uint32_t x>
+// void led_strip_self_test(const CRGB color = CRGB(255, 255, 255, const uint8_t brightness = 8, bool all_at_once = false);
+
+// template<typedef T, uint32_t x>
+// void led_strip_self_test(const CRGB color = CRGB(255, 255, 255, const uint8_t brightness = 8, bool all_at_once = false);
+
 typedef uint8_t UINT_8;
 typedef uint16_t UINT_16;
 

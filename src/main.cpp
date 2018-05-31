@@ -13,6 +13,8 @@
 #define PIN 6
 CRGBArray<NUM_LEDS> leds;
 
+
+
 // Eine LED-Matrix erstellen
 LEDArrangement::LEDMatrix base_mat(leds, 10, 30, LEDArrangement::Wiring_Start_Point::TOP_RIGHT, LEDArrangement::Strip_Orientation::ZIGZAG_HORIZONTAL);
 
@@ -46,7 +48,6 @@ void setup()
     FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
     base_mat.all_off();
 
-
     // set time sync provider
     // setSyncProvider(LEDArrangement::get_time);
     // setSyncInterval(10);
@@ -61,6 +62,26 @@ void setup()
         DEBUG("Starting Setup...");
     }
     delay(1000);
+
+
+    // Selbsttest LED-Strip
+    LEDArrangement::led_strip_self_test(leds, NUM_LEDS);
+    delay(2000);
+    base_mat.all_off();
+
+
+
+    // Helligkeitstest
+    FastLED.setBrightness(255);
+    base_mat.color_all(CRGB(255, 255, 255));
+    FastLED.show();
+    delay(5000);
+    base_mat.color_all(CRGB(255, 255, 56));
+    FastLED.show();
+    delay(5000);
+    FastLED.setBrightness(8);
+    //base_mat.all_off();
+
 
 
 
