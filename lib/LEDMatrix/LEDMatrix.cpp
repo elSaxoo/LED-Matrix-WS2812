@@ -11,8 +11,9 @@ namespace LEDArrangement
 
 
 // Konstruktor
-LEDMatrix::LEDMatrix(CRGBArray<STRIP_LENGTH> &leds, const UINT_16 Height, const UINT_16 Width, const Wiring_Start_Point Wiring_start_point, const Strip_Orientation Strip_orientation)
+LEDMatrix::LEDMatrix(CRGB* leds, const UINT_16 Height, const UINT_16 Width, const Wiring_Start_Point Wiring_start_point, const Strip_Orientation Strip_orientation)
     : mat_type(MatrixType::BASE_MATRIX),
+      STRIP_LENGTH(Height * Width),
       complete_strip(leds),
       base_height(Height),
       base_width(Width),
@@ -39,6 +40,7 @@ LEDMatrix::LEDMatrix(CRGBArray<STRIP_LENGTH> &leds, const UINT_16 Height, const 
 // Sub-Matrix Konstruktor
 LEDMatrix::LEDMatrix(LEDMatrix &Base_mat, const UINT_16 Height, const UINT_16 Width, const UINT_16 Row_offset, const UINT_16 Column_offset)
     : mat_type(MatrixType::SUB_MATRIX),
+      STRIP_LENGTH(Base_mat.base_height * Base_mat.base_width),
       complete_strip(Base_mat.complete_strip),
       base_height(Base_mat.base_height),
       base_width(Base_mat.base_width),
@@ -71,6 +73,7 @@ LEDMatrix::LEDMatrix(LEDMatrix &Base_mat, const UINT_16 Height, const UINT_16 Wi
 // Vector Konstruktor
 LEDMatrix::LEDMatrix(LEDMatrix &Base_mat, const MatrixType Type, const UINT_16 Offset)
     : mat_type(Type == MatrixType::ROW_VECTOR ? MatrixType::ROW_VECTOR : MatrixType::COLUMN_VECTOR),
+      STRIP_LENGTH(Base_mat.base_height * Base_mat.base_width),
       complete_strip(Base_mat.complete_strip),
       base_height(Base_mat.base_height),
       base_width(Base_mat.base_width),
@@ -101,6 +104,7 @@ LEDMatrix::LEDMatrix(LEDMatrix &Base_mat, const MatrixType Type, const UINT_16 O
 // Kopierkonstuktor
 LEDMatrix::LEDMatrix(LEDMatrix &other_mat)
     : mat_type(other_mat.mat_type),
+      STRIP_LENGTH(other_mat.base_height * other_mat.base_width),
       complete_strip(other_mat.complete_strip),
       base_height(other_mat.base_height),
       base_width(other_mat.base_width),

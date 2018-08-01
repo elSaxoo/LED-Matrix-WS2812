@@ -1,6 +1,10 @@
 #include <SlidingText.h>
 
 
+#include <debugging.h>
+#define DEBUGGING true
+#define ASSERT_CHECK true
+
 namespace LEDArrangement
 {
 
@@ -12,7 +16,9 @@ namespace Effects
 
 SlidingText::SlidingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
         const CRGB Color, const CRGB Background, const UINT_8 Space_between_characters, 
-        const LEDArrangement::Direction direction, const UINT_8 Edge_offset, const uint32_t Slide_to)
+        const LEDArrangement::Direction direction, 
+        const UINT_8 Edge_offset, const uint32_t Slide_to,
+        const bool Auto_repeat)
 :
 LED_effect(Mat, Delay_between_frames),
 text(Text),
@@ -22,6 +28,7 @@ space_between_characters(Space_between_characters),
 direction(direction), 
 edge_offset(Edge_offset),
 slide_to(Slide_to),
+auto_repeat(Auto_repeat),
 //
 space_counter(0),
 String_char_index(0),
@@ -29,28 +36,17 @@ Bitmap_column_index(0),
 temp_char_bitmap(LEDArrangement::Font::FontBitmap::of('K')),
 temp_column_bitmap(0),
 //
-is_matrix_big_enough_for_text(false),
-is_hole_text_on_matrix(false),
+// is_matrix_big_enough_for_text(false),
+// is_hole_text_on_matrix(false),
 only_cycle(false),
 slide_out(false),
-auto_repeat(false),
 slide_counter(0)
 {
-    edge_offset = (edge_offset < mat.matrix_width()) ? edge_offset : mat.matrix_width();
 
-    // Wenn der Text automatisch wiederholt werden soll
-    if(this->auto_repeat_offsett & slide_to)
-    {
-        slide_to &= ~(this->auto_repeat_offsett);
-        this->auto_repeat = true;
-    }
-    // Wenn automatisch das Ende des Text ausgewält werden soll
-    if(this->text_end_offsett & slide_to)
-    {
-        slide_to &= ~(this->text_end_offsett);
-        slide_to += LEDArrangement::Font::FontBitmap::length_of(this->text, this->space_between_characters);
-    }
+    this->set_edge_offset(Edge_offset);
 
+    this->set_slide_to(slide_to);
+    
     String_char_index = (direction == LEDArrangement::Direction::LEFT) ? 0 : text.length() - 1;
     temp_char_bitmap = LEDArrangement::Font::font_bitmap[text.charAt(String_char_index)];
 
@@ -78,6 +74,19 @@ bool SlidingText::setup()
 
 bool SlidingText::render_next_frame()
 {
+    if (DEBUGGING)
+    {
+        DEBUG(this->text);
+        DEBUG(String("String_char_index: ") + String(String_char_index));
+        DEBUG(String("Bitmap_column_index: ") + String(Bitmap_column_index));
+        DEBUG(String("space_counter: ") + String(space_counter));
+        DEBUG(String("slide_out: ") + String(slide_out));
+        DEBUG(String("slide_counter: ") + String(slide_counter));
+        DEBUG(String("slide_to: ") + String(slide_to));
+        DEBUG();
+    }
+
+
     // Nur Rotieren lassen
     if(this->only_cycle)
     {
@@ -278,12 +287,12 @@ bool SlidingText::reset_index_parameter_and_bitmaps()
     this->slide_counter = 0;
     this->slide_out = false;
 
+    // Space Counter zurücksetzen 
+    this->space_counter = 0;
+
     switch(this->direction)
     {
         case Direction::RIGHT:
-            
-            // Space Counter zurücksetzen 
-            this->space_counter = 0;
             
             // Index für Zeichen zurücksetzen
             this->String_char_index = this->text.length() - 1;
@@ -300,9 +309,6 @@ bool SlidingText::reset_index_parameter_and_bitmaps()
         case Direction::LEFT:
         default:
 
-            // Space Counter zurücksetzen 
-            this->space_counter = 0;
-
             // Index für Zeichen zurücksetzen
             this->String_char_index = 0;
             // Bitmap von neuem Zeichen laden
@@ -317,7 +323,6 @@ bool SlidingText::reset_index_parameter_and_bitmaps()
     }
     return true;
 }
-
 
 void SlidingText::write_bitmap_in_matrix_column(const LEDArrangement::Font::ColumnBitmap& bitmap, const UINT_8 column_index)
 {
@@ -339,7 +344,128 @@ void SlidingText::write_bitmap_in_matrix_column(const LEDArrangement::Font::Colu
 }
 
 
+// Setter
+SlidingText& SlidingText::set_text(const String text) 
+{
 
+    if(DEBUGGING)
+    {
+        DEBUG("OLD: " + this->text);
+        DEBUG("NEW: " + text);
+    }
+
+    this->text = text;
+
+    if(DEBUGGING)
+    {
+        DEBUG("CHANGED: " + this->text);
+        delay(10000);
+    }
+
+    this->set_slide_to(this->TextEnd + this->MatrixWidth);
+    this->reset_index_parameter_and_bitmaps();
+    // this->setup(); 
+    return *this;
+}
+
+SlidingText& SlidingText::set_color(const CRGB color) 
+{
+    this->color = color;
+    return *this;
+}
+
+SlidingText& SlidingText::set_background(const CRGB background) 
+{
+    this->background = background;
+    return *this;
+}
+
+SlidingText& SlidingText::set_space_between_characters(const UINT_8 space_between_characters) 
+{
+    this->space_between_characters = space_between_characters;
+    return *this;
+}
+
+SlidingText& SlidingText::set_direction(const LEDArrangement::Direction direction) 
+{
+    this->direction = direction;
+    return *this;
+}
+
+SlidingText& SlidingText::set_edge_offset(const UINT_8 edge_offset) 
+{
+    this->edge_offset = (edge_offset < mat.matrix_width()) ? edge_offset : mat.matrix_width();
+    return *this;
+}
+
+SlidingText& SlidingText::set_slide_to(const uint32_t slide_to) 
+{
+
+    this->slide_to = slide_to;
+
+    // Wenn automatisch das Ende des Text ausgewält werden soll
+    if(this->text_end_offset & slide_to)
+    {
+        this->slide_to &= ~(this->text_end_offset);
+        this->slide_to += LEDArrangement::Font::FontBitmap::length_of(this->text, this->space_between_characters);
+    }
+    // Wenn automatisch das Ende der Matrix ausgewält werden soll
+    if(this->matrix_width_offset & slide_to)
+    {
+        this->slide_to &= ~(this->matrix_width_offset);
+        this->slide_to += this->mat.matrix_width();
+    }
+
+    return *this;
+}
+
+SlidingText& SlidingText::set_auto_repeat(const bool auto_repeat) 
+{
+    this->auto_repeat = auto_repeat;
+    return *this;
+}
+
+
+// Getter
+String SlidingText::get_text() const
+{
+    return this->text;
+}
+
+CRGB SlidingText::get_color() const
+{
+    return this->color;
+}
+
+CRGB SlidingText::get_background() const
+{
+    return this->background;
+}
+
+UINT_8 SlidingText::get_space_between_characters() const
+{
+    return this->space_between_characters;
+}
+
+LEDArrangement::Direction SlidingText::get_direction() const
+{
+    return this->direction;
+}
+
+UINT_8 SlidingText::get_edge_offset() const
+{
+    return this->edge_offset;
+}
+
+uint32_t SlidingText::get_slide_to() const
+{
+    return this->slide_to;
+}
+
+bool SlidingText::get_auto_repeat() const
+{
+    return this->auto_repeat;
+}
 
 
 

@@ -6,8 +6,6 @@
 #include <stdint.h>
 #include <FastLED.h>
 
-#define STRIP_LENGTH 300
-
 namespace LEDArrangement
 {
 
@@ -84,7 +82,7 @@ class LEDMatrix
 
   public:
     // Konstruktor
-    LEDMatrix(CRGBArray<STRIP_LENGTH> &leds, const UINT_16 Height, const UINT_16 Width, const Wiring_Start_Point Wiring_start_point, const Strip_Orientation Strip_orientation);
+    LEDMatrix(CRGB* leds, const UINT_16 Height, const UINT_16 Width, const Wiring_Start_Point Wiring_start_point, const Strip_Orientation Strip_orientation);
 
     // Sub-Matrix Konstruktor
     LEDMatrix(LEDMatrix &Base_mat, const UINT_16 Height, const UINT_16 Width, const UINT_16 Row_offset, const UINT_16 Column_offset);
@@ -108,7 +106,7 @@ class LEDMatrix
     const UINT_16 matrix_column_offset() const { return column_offset; }
 
     // Getter-Methoden für Hardware-Eigenschaften
-    CRGBArray<STRIP_LENGTH> &matrix_complete_strip() const { return complete_strip; }
+    CRGB* matrix_complete_strip() const { return complete_strip; }
     const Wiring_Start_Point matrix_wiring_start_point() const { return wiring_start_point; }
     const Strip_Orientation matrix_strip_orientation() const { return strip_orientation; }
 
@@ -156,7 +154,8 @@ class LEDMatrix
     const MatrixType mat_type;
 
     // Referenz auf das FastLED-Objekt
-    CRGBArray<STRIP_LENGTH> &complete_strip;
+    uint32_t STRIP_LENGTH;
+    CRGB* complete_strip;
 
     // Die Dimensionen der Matrix
     const UINT_16 base_height;

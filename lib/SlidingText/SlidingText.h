@@ -17,17 +17,20 @@ namespace Effects
 class SlidingText : public LED_effect
 {
     private:
-        static const uint32_t auto_repeat_offsett = ((uint32_t)1 << 31); // Wert wichtig nicht ändern
-        static const uint32_t text_end_offsett = ((uint32_t)1 << 30); // Wert wichtig nicht ändern
+
+        static const uint32_t text_end_offset = ((uint32_t)1 << 31); // Wert wichtig nicht ändern
+        static const uint32_t matrix_width_offset = ((uint32_t)1 << 30); // Wert wichtig nicht ändern
     
     public:
 
-        static const uint32_t AutoRepeat = auto_repeat_offsett;
-        static const uint32_t TextEnd = text_end_offsett;
+        static const uint32_t TextEnd = text_end_offset;
+        static const uint32_t MatrixWidth = matrix_width_offset;
 
         SlidingText(LEDMatrix& Mat, const uint32_t Delay_between_frames, const String Text,
                     const CRGB Color = CRGB(0, 255, 0), const CRGB Background = CRGB(0, 0, 0), const UINT_8 Space_between_characters = 1, 
-                    const LEDArrangement::Direction direction = LEDArrangement::Direction::LEFT, const UINT_8 Edge_offset = 0, const uint32_t Slide_to = TextEnd);
+                    const LEDArrangement::Direction direction = LEDArrangement::Direction::LEFT, 
+                    const UINT_8 Edge_offset = 0, const uint32_t Slide_to = TextEnd + MatrixWidth,
+                    const bool Auto_repeat = false);
 
         bool setup();
 
@@ -37,6 +40,28 @@ class SlidingText : public LED_effect
 
         const Direction change_direction(const Direction new_dir);
         const Direction change_direction();
+
+
+        // Setter
+        SlidingText& set_text(const String text);
+        SlidingText& set_color(const CRGB color);
+        SlidingText& set_background(const CRGB background);
+        SlidingText& set_space_between_characters(const UINT_8 space_between_characters);
+        SlidingText& set_direction(const LEDArrangement::Direction direction);
+        SlidingText& set_edge_offset(const UINT_8 edge_offset);
+        SlidingText& set_slide_to(const uint32_t slide_to);
+        SlidingText& set_auto_repeat(const bool auto_repeat);
+
+        // Getter
+        String get_text() const;
+        CRGB get_color() const;
+        CRGB get_background() const;
+        UINT_8 get_space_between_characters() const;
+        LEDArrangement::Direction get_direction() const;
+        UINT_8 get_edge_offset() const;
+        uint32_t get_slide_to() const;
+        bool get_auto_repeat() const;
+
 
     private:
 
@@ -54,6 +79,7 @@ class SlidingText : public LED_effect
         LEDArrangement::Direction direction;
         UINT_8 edge_offset;
         uint32_t slide_to;
+        bool auto_repeat;
 
         // Index-Parameter
         int16_t space_counter;
@@ -63,11 +89,10 @@ class SlidingText : public LED_effect
         LEDArrangement::Font::ColumnBitmap temp_column_bitmap;
 
         // Status
-        bool is_matrix_big_enough_for_text;
-        bool is_hole_text_on_matrix;
+        // bool is_matrix_big_enough_for_text;
+        // bool is_hole_text_on_matrix;
         bool only_cycle;
         bool slide_out;
-        bool auto_repeat;
         uint32_t slide_counter;
     
 

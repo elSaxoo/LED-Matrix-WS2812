@@ -8,11 +8,11 @@
 
 #ifdef USE_FUNCTIONS
 
-void ASSERT(const bool test_statement);
+void ASSERT(const bool test_statement = true);
 
-void TEST(const bool test_statement);
+void TEST(const bool test_statement = true);
 
-void DEBUG(const String text);
+void DEBUG(const String text = String(""));
 
 #endif // USE_FUNCTIONS
 
