@@ -45,6 +45,8 @@ const char emoji_text[] = {
 LEDArrangement::LEDMatrix base_mat(leds, 8, 2*32, LEDArrangement::Wiring_Start_Point::BOTTOM_RIGHT, LEDArrangement::Strip_Orientation::ZIGZAG_VERTICAL);
 LEDArrangement::LEDMatrix sub_mat_time(base_mat, 8, 2*32, 0, 0);
 
+
+// LED-Effekt anlegen
 LEDArrangement::Effects::SlidingText roll_effect(sub_mat_time, 2400/30, String(emoji_text), // String("Kai ist cool"),
                                 CRGB(0, 255, 0), CRGB(0, 0, 0), 1,
                                 LEDArrangement::Direction::LEFT, 0, 
