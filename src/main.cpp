@@ -6,16 +6,24 @@
 #include <SlidingText.h>
 
 #include <debugging.h>
-#define DEBUGGING true
+#define DEBUGGING false
 #define ASSERT_CHECK true
 
-// // Kai
-// #define NUM_LEDS (10 * 30)
-// #define PIN 21
+#define KR 
+// #define JS
+
+
+// Kai
+#ifdef KR
+    #define NUM_LEDS (10 * 30)
+    #define PIN 21
+#endif
 
 // Jesko
-#define NUM_LEDS (2 * 8 * 32)
-#define PIN 21
+#ifdef JS
+    #define NUM_LEDS (2 * 8 * 32)
+    #define PIN 21
+#endif
 
 // CRGB Array anlegen
 // CRGBArray<NUMBER_OF_LEDS> leds;
@@ -23,7 +31,7 @@ CRGB leds[NUM_LEDS]; // Kein Template Parameter :-)
 
 // Für Jessica, 
 // das 'J' steht für Jessica
-const char text[] = {'K', '+', 'J', '=', LEDArrangement::Font::Emoji::Heart};
+const char jessica_text[] = {'K', '+', 'J', '=', LEDArrangement::Font::Emoji::Heart};
 
 
 // Emoji Test
@@ -33,21 +41,31 @@ const char emoji_text[] = {
     LEDArrangement::Font::Emoji::Heart,
     LEDArrangement::Font::Emoji::Y,
     LEDArrangement::Font::Emoji::X,
-    LEDArrangement::Font::Emoji::Attention
+    LEDArrangement::Font::Emoji::Attention,
+    0
 };
+const String emoji_string(emoji_text);
+
+// Test Text
+const char test_text[] = "Kai ist cool";
+const String test_string(test_text);
 
 
-// // Eine LED-Matrix erstellen // Kai
-// LEDArrangement::LEDMatrix base_mat(leds, 10, 30, LEDArrangement::Wiring_Start_Point::TOP_RIGHT, LEDArrangement::Strip_Orientation::ZIGZAG_HORIZONTAL);
-// LEDArrangement::LEDMatrix sub_mat_time(base_mat, 8, 30, 1, 0);
+// Eine LED-Matrix erstellen // Kai
+#ifdef KR
+LEDArrangement::LEDMatrix base_mat(leds, 10, 30, LEDArrangement::Wiring_Start_Point::TOP_RIGHT, LEDArrangement::Strip_Orientation::ZIGZAG_HORIZONTAL);
+LEDArrangement::LEDMatrix sub_mat(base_mat, 8, 30, 1, 0);
+#endif
 
 // Eine LED-Matrix erstellen // Jesko
+// Jesko
+#ifdef JS
 LEDArrangement::LEDMatrix base_mat(leds, 8, 2*32, LEDArrangement::Wiring_Start_Point::BOTTOM_RIGHT, LEDArrangement::Strip_Orientation::ZIGZAG_VERTICAL);
-LEDArrangement::LEDMatrix sub_mat_time(base_mat, 8, 2*32, 0, 0);
-
+LEDArrangement::LEDMatrix sub_mat(base_mat, 8, 2*32, 0, 0);
+#endif
 
 // LED-Effekt anlegen
-LEDArrangement::Effects::SlidingText roll_effect(sub_mat_time, 2400/30, String(emoji_text), // String("Kai ist cool"),
+LEDArrangement::Effects::SlidingText roll_effect(sub_mat, 2400/30, test_string,
                                 CRGB(0, 255, 0), CRGB(0, 0, 0), 1,
                                 LEDArrangement::Direction::LEFT, 0, 
                                 20 + LEDArrangement::Effects::SlidingText::TextEnd + LEDArrangement::Effects::SlidingText::MatrixWidth,
@@ -70,14 +88,14 @@ void setup()
 
     if (DEBUGGING)
     {
-        // Serielle Verbindung zum 
+        // Serielle Verbindung starten 
         Serial.begin(115200);
         delay(100);
 
         DEBUG("Starting Setup...");
     }
     delay(1000);
-
+    
 
     // // Selbsttest LED-Strip
     // LEDArrangement::led_strip_self_test(leds, NUM_LEDS);
@@ -87,7 +105,7 @@ void setup()
 
     // // Emoji Test
     // FastLED.setBrightness(64);
-    // LEDArrangement::print_string(sub_mat_time, emoji_text, CRGB(0, 255, 0), CRGB(0, 0, 0), 1);
+    // LEDArrangement::print_string(sub_mat, emoji_text, CRGB(0, 255, 0), CRGB(0, 0, 0), 1);
     // // FastLED.show(); in print-Befehl enthalten
     // delay(10000);
     // FastLED.setBrightness(8);
@@ -126,9 +144,9 @@ void loop()
         FastLED.show();
     }
 
-    if (millis() > 10000 && !text_changed)
+    if (millis() > 16750 && !text_changed)
     {
-        roll_effect.set_text(String("Hello"));
+        roll_effect.set_text(String(emoji_text), true);
         text_changed = true;
     }
 }

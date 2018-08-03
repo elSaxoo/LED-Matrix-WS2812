@@ -9,7 +9,11 @@ namespace LEDArrangement
 
 namespace Font
 {
-// Implementierung fehlt noch
+
+
+// Einzelne Zeichenb eines Strings auf der Seriellen Schittstelle ausgeben
+uint32_t print_chars_to_serial(const String text, const uint8_t base = 0, HardwareSerial& output = Serial);
+uint32_t println_chars_to_serial(const String text, const uint8_t base = 0, HardwareSerial& output = Serial);
 
 
 // Hilfsklasse für [][][]-Operator

@@ -44,6 +44,10 @@ class SlidingText : public LED_effect
 
         // Setter
         SlidingText& set_text(const String text);
+        SlidingText& set_text(const String text, const uint32_t slide_to);
+        SlidingText& set_text(const String text, const bool reset);
+        SlidingText& set_text(const String text, const uint32_t slide_to, const bool reset);
+        SlidingText& set_text(const String text, const bool reset, const uint32_t slide_to);
         SlidingText& set_color(const CRGB color);
         SlidingText& set_background(const CRGB background);
         SlidingText& set_space_between_characters(const UINT_8 space_between_characters);

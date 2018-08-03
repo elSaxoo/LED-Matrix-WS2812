@@ -2,7 +2,7 @@
 
 
 #include <debugging.h>
-#define DEBUGGING true
+#define DEBUGGING false
 #define ASSERT_CHECK true
 
 namespace LEDArrangement
@@ -345,7 +345,24 @@ void SlidingText::write_bitmap_in_matrix_column(const LEDArrangement::Font::Colu
 
 
 // Setter
-SlidingText& SlidingText::set_text(const String text) 
+
+SlidingText& SlidingText::set_text(const String text)
+{
+    return this->set_text(text, false, this->TextEnd + this->MatrixWidth);
+}
+SlidingText& SlidingText::set_text(const String text, const uint32_t slide_to)
+{
+    return this->set_text(text, false, slide_to);
+}
+SlidingText& SlidingText::set_text(const String text, const bool reset)
+{
+    return this->set_text(text, reset, this->TextEnd + this->MatrixWidth);
+}
+SlidingText& SlidingText::set_text(const String text, const uint32_t slide_to, const bool reset)
+{
+    return this->set_text(text, reset, slide_to);
+}
+SlidingText& SlidingText::set_text(const String text, const bool reset, const uint32_t slide_to)
 {
 
     if(DEBUGGING)
@@ -362,9 +379,9 @@ SlidingText& SlidingText::set_text(const String text)
         delay(10000);
     }
 
-    this->set_slide_to(this->TextEnd + this->MatrixWidth);
+    this->set_slide_to(slide_to);
     this->reset_index_parameter_and_bitmaps();
-    // this->setup(); 
+    if(reset) this->setup(); 
     return *this;
 }
 

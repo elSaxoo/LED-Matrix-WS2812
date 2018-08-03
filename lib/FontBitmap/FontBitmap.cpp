@@ -579,6 +579,24 @@ const PROGMEM uint8_t* const font_bitmap_array[] = {
 };
 
 
+uint32_t print_chars_to_serial(const String text, const uint8_t base, HardwareSerial& output)
+{
+    const uint32_t text_length = text.length();
+    for(uint32_t i = 0; i < text_length; ++i)
+    {
+        output.print((uint8_t)text.charAt(i), base);
+        if (base >  0) output.print(",\t");
+    }
+    return text_length;
+}
+
+uint32_t println_chars_to_serial(const String text, const uint8_t base, HardwareSerial& output)
+{
+    const uint32_t printed_chars = print_chars_to_serial(text, base, output);
+    output.println();
+    return printed_chars;
+}
+
 
 
 // ------- ColumnBitmap -------
