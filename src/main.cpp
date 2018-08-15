@@ -4,6 +4,7 @@
 #include <FontBitmap.h>
 #include <applications.h>
 #include <SlidingText.h>
+#include <Rainbow.h>
 
 #include <debugging.h>
 #define DEBUGGING false
@@ -67,10 +68,16 @@ LEDArrangement::LEDMatrix sub_mat(base_mat, 8, 2*32, 0, 0);
 // LED-Effekt anlegen
 LEDArrangement::Effects::SlidingText roll_effect(sub_mat, 2400/30, test_string,
                                 CRGB(0, 255, 0), CRGB(0, 0, 0), 1,
-                                LEDArrangement::Direction::LEFT, 0, 
+                                LEDArrangement::Direction::RIGHT, 0, 
                                 20 + LEDArrangement::Effects::SlidingText::TextEnd + LEDArrangement::Effects::SlidingText::MatrixWidth,
                                 true);
 
+// LED-Effekt anlegen
+LEDArrangement::Effects::Rainbow rainbow_effect(base_mat, 5100/255, 
+                                1, 1,
+                                8, 25,
+                                0, 0,
+                                255, 255);
 
 
 
@@ -113,7 +120,11 @@ void setup()
 
 
     // Matrix für Effekt initialisieren
-    roll_effect.setup();
+    // roll_effect.setup();
+
+    rainbow_effect.auto_scale_kx_ky(false, true);
+    rainbow_effect.setup();
+    
     // an Matrix übertragen
     FastLED.show();
     delay(2000);
@@ -134,7 +145,8 @@ void loop()
     // Objekt prüft selber, ob seit dem letzten Frame genug Zeit vergangen ist
     // Wenn ja wird neues Frame berechent und true zurückgegeben.
     // Wenn nicht wird nur false zurückgegeben.
-    new_frame_available = roll_effect.update_frame(millis());
+    // new_frame_available = roll_effect.update_frame(millis());
+    new_frame_available = rainbow_effect.update_frame(millis());
 
 
     // Wenn ein neues Frame berechnet wurde 
